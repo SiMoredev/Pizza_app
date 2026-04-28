@@ -2,7 +2,7 @@
 FROM python
 
 # Рабочая папка внутри контейнера
-WORKDIR /app
+WORKDIR /pizza_app
 
 # Копируем зависимости сначала (для кэширования слоёв)
 COPY requirements.txt .
@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 8000
 
 # Команда запуска
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
