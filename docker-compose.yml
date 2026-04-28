@@ -1,6 +1,7 @@
 services:
   api:
     build: .
+    working_dir: /pizza_app  # ← важно!
     container_name: api
     depends_on:
       db:
