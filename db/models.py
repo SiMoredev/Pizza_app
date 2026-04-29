@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Boolean
-from .database import Base
+from db.database import Base
 
 class PizzasCatalog(Base):
 
@@ -20,6 +20,6 @@ class Users(Base):
 
     id = Column(Integer, primary_key=True, index=True)
 
-    username = Column(String(100), index=True, nullable=False)
+    username = Column(String(100), index=True, nullable=True)
     email = Column(String(100), unique=True, index=True, nullable=False)
     password = Column(String(100), nullable=False)
