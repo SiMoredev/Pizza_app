@@ -47,13 +47,7 @@ async def login_user(email: str, password: str, db: AsyncSession = Depends(get_d
     result = await db.execute(query)
     existing_user = result.scalar_one_or_none()
     
-    if not existing_user:
-        raise HTTPException(
-            status_code=401,
-            detail="Not valid email or password"
-        )
-
-    if not bcrypt.checkpw(password.encode("utf-8"), existing_user.password.encode("utf-8")):
+    if not existing_user or not bcrypt.checkpw(password.encode("utf-8"), existing_user.password.encode("utf-8")):
         raise HTTPException(
             status_code=401,
             detail="Not valid email or password"
