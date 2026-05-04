@@ -3,7 +3,7 @@ from db.database import Base
 
 class PizzasCatalog(Base):
 
-    __tablename__ = "PizzasCatalog"
+    __tablename__ = "pizzasCatalog"
 
     id = Column(Integer, primary_key=True, index=True)
 
@@ -16,7 +16,7 @@ class PizzasCatalog(Base):
 
 class Users(Base):
 
-    __tablename__ = "Users"
+    __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
 

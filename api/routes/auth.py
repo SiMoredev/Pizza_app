@@ -4,21 +4,16 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import APIRouter, Depends, HTTPException, status
 from api.deps import get_db
 from db.models import Users
+import bcrypt
 #from authx import AuthX, AuthXConfig
 
 auth_router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 #config = AuthXConfig()
-#config.JWT_SECRET_KEY = "srfgggsgv"
-#security = AuthX(config=config)
-
-@auth_router.post("/auth")
-async def auth_user():
-
-    return {"message": "Authentication endpoint is working!"}
 
 @auth_router.post("/register")
 async def register_user(email: str, password: str, db: AsyncSession = Depends(get_db)):
+
     if not email or not password:
         return {"error": "Username or password are required."}
     
@@ -34,7 +29,11 @@ async def register_user(email: str, password: str, db: AsyncSession = Depends(ge
         )
     
     # Создаем нового пользователя
-    new_user = Users(email=email, password=password)  # адаптируйте под вашу модель
+    hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt(rounds=12))
+    new_user = Users(
+        email=email, 
+        password=hashed_password.decode('utf-8')
+        )  # адаптируйте под вашу модель
     db.add(new_user)
     await db.commit()
     await db.refresh(new_user)
@@ -42,5 +41,25 @@ async def register_user(email: str, password: str, db: AsyncSession = Depends(ge
     return {"message": "User registered successfully!"}
 
 @auth_router.get("/login")
-async def login_user():
-    return {"message": "Login endpoint is working!"}
+async def login_user(email: str, password: str, db: AsyncSession = Depends(get_db)):
+    
+    query = select(Users).where(Users.email == email)
+    result = await db.execute(query)
+    existing_user = result.scalar_one_or_none()
+    
+    if not existing_user:
+        raise HTTPException(
+            status_code=401,
+            detail="Not valid email or password"
+        )
+
+    if not bcrypt.checkpw(password.encode("utf-8"), existing_user.password.encode("utf-8")):
+        raise HTTPException(
+            status_code=401,
+            detail="Not valid email or password"
+        )
+    
+    #config.JWT_SECRET_KEY = "srfgggsgv"
+    #security = AuthX(config=config)
+    
+    return {"message": "Login successful!"}
