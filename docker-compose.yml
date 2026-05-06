@@ -46,3 +46,11 @@ services:
       timeout: 10s
     ports:
       - "5432:5432"
+  auth-frontend:
+    image: nginx:alpine
+    container_name: auth-frontend
+    ports:
+      - "8080:80"
+    volumes:
+      - ./frontend/front_auth.html:/usr/share/nginx/html/index.html
+    restart: unless-stopped
