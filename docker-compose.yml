@@ -22,6 +22,7 @@ services:
       - "8000:8000"
     environment:
       - DATABASE_URL=${DATABASE_URL:?err}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
     volumes:
       # 🔥 Пробрасываем локальную папку в контейнер
       - ./:/pizza_app  # Путь внутри контейнера должен совпадать с WORKDIR в Dockerfile

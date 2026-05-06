@@ -1,15 +1,30 @@
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Response
 from api.deps import get_db
 from db.models import Users
 import bcrypt
-#from authx import AuthX, AuthXConfig
+from authx import AuthX, AuthXConfig
+import os
+from dotenv import load_dotenv
+from datetime import timedelta
+
+load_dotenv()
 
 auth_router = APIRouter(prefix="/auth", tags=["Authentication"])
 
-#config = AuthXConfig()
+config = AuthXConfig(
+    JWT_SECRET_KEY=os.getenv("JWT_SECRET_KEY"),
+    JWT_ALGORITHM="HS256",
+    JWT_ACCESS_TOKEN_EXPIRES=timedelta(minutes=30),
+    JWT_REFRESH_TOKEN_EXPIRES=timedelta(days=7),
+    JWT_TOKEN_LOCATION=["cookies"],
+    JWT_ACCESS_COOKIE_NAME="access_token",
+    JWT_REFRESH_COOKIE_NAME="refresh_token",
+)
+
+auth = AuthX(config=config)
 
 @auth_router.post("/register")
 async def register_user(email: str, password: str, db: AsyncSession = Depends(get_db)):
@@ -40,8 +55,8 @@ async def register_user(email: str, password: str, db: AsyncSession = Depends(ge
     
     return {"message": "User registered successfully!"}
 
-@auth_router.get("/login")
-async def login_user(email: str, password: str, db: AsyncSession = Depends(get_db)):
+@auth_router.post("/login")
+async def login_user(response: Response, email: str, password: str, db: AsyncSession = Depends(get_db)):
     
     query = select(Users).where(Users.email == email)
     result = await db.execute(query)
@@ -53,7 +68,16 @@ async def login_user(email: str, password: str, db: AsyncSession = Depends(get_d
             detail="Not valid email or password"
         )
     
-    #config.JWT_SECRET_KEY = "srfgggsgv"
-    #security = AuthX(config=config)
-    
-    return {"message": "Login successful!"}
+    access_token = auth.create_access_token(uid=email)
+
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=True,
+        max_age=1800,  # 30 минут в секундах
+        samesite="lax",
+        secure=False,  # True в продакшене с HTTPS
+        path="/"
+    )
+
+    return {"message": "Login successful!", "access_token": access_token}
