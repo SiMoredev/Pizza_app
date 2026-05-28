@@ -9,7 +9,7 @@ class PizzasCatalog(Base):
 
     namePizza = Column(String(100), index=True, nullable=False)
     cost = Column(Integer, nullable=False)
-    ingridients = Column(String, nullable=False)
+    ingredients = Column(String, nullable=False)
     picturePizza = Column(String, nullable=False)
     size = Column(Integer, nullable=False)
     thicknessDough = Column(Boolean, nullable=False)
@@ -20,6 +20,8 @@ class Users(Base):
 
     id = Column(Integer, primary_key=True, index=True)
 
-    username = Column(String(100), index=True, nullable=True)
+    username = Column(String(100), index=True, default="user")
     email = Column(String(100), unique=True, index=True, nullable=False)
     password = Column(String(100), nullable=False)
+
+    role = Column(String(100), default="user")

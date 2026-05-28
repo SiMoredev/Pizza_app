@@ -53,4 +53,4 @@ services:
       - "8080:80"
     volumes:
       - ./frontend/front_auth.html:/usr/share/nginx/html/index.html
-    restart: unless-stopped
+    restart: always

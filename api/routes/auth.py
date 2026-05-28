@@ -1,4 +1,3 @@
-
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import APIRouter, Depends, HTTPException, Response
@@ -66,7 +65,12 @@ async def login_user(response: Response, email: str, password: str, db: AsyncSes
             detail="Not valid email or password"
         )
     
-    access_token = auth.create_access_token(uid=email)
+    access_token = auth.create_access_token(
+        uid=str(existing_user.email),
+        data={
+            "role": existing_user.role
+        }
+    )
 
     response.set_cookie(
         key="access_token",
@@ -79,3 +83,11 @@ async def login_user(response: Response, email: str, password: str, db: AsyncSes
     )
 
     return {"message": "Login successful!", "access_token": access_token}
+
+@auth_router.get("/me")
+async def me(claims=Depends(auth.access_token_required)):
+
+    return {
+        "sub": claims.sub,
+        "role": claims.role
+    }

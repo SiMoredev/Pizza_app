@@ -2,235 +2,632 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Авторизация</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Пиццерия МамаМия | Каталог пиццы</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            min-height: 100vh;
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+            background: #fef9f0;
+            color: #2d2a24;
+        }
+
+        /* ----- Хедер с навигацией ----- */
+        .main-header {
+            background: #fff6ea;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(2px);
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .header-content {
             display: flex;
             align-items: center;
-            justify-content: center;
-            padding: 1rem;
+            justify-content: space-between;
+            padding: 18px 0;
+            flex-wrap: wrap;
+            gap: 16px;
         }
-        .card {
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            font-size: 2.2rem;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #c0392b, #e67e22);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+        }
+
+        .logo p {
+            font-size: 0.8rem;
+            color: #7f6b5a;
+        }
+
+        .auth-button {
+            background: #c2410c;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .auth-button:hover {
+            background: #9a3412;
+            transform: scale(1.02);
+        }
+
+        .user-badge {
+            background: #f1e5d8;
+            padding: 8px 16px;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .user-email {
+            color: #92400e;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .logout-header {
+            background: none;
+            border: 1px solid #c2410c;
+            color: #c2410c;
+            padding: 6px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        .logout-header:hover {
+            background: #c2410c;
+            color: white;
+        }
+
+        /* Каталог пиццы */
+        .catalog-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin: 40px 0 16px 0;
+            position: relative;
+            display: inline-block;
+        }
+        .catalog-title:after {
+            content: '';
+            display: block;
+            width: 70px;
+            height: 4px;
+            background: #e67e22;
+            margin-top: 8px;
+            border-radius: 4px;
+        }
+
+        .pizza-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 32px;
+            margin: 30px 0 60px;
+        }
+
+        .pizza-card {
             background: white;
-            border-radius: 1.5rem;
-            padding: 2rem;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 20px 35px -10px rgba(0,0,0,0.3);
+            border-radius: 28px;
+            overflow: hidden;
+            transition: all 0.25s ease;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            cursor: pointer;
+            border: 1px solid #f3e5d8;
         }
-        h2 { font-size: 1.8rem; font-weight: 600; margin-bottom: 0.5rem; color: #0f172a; }
-        .sub { color: #475569; margin-bottom: 1.8rem; font-size: 0.9rem; }
-        .input-group { margin-bottom: 1.2rem; }
-        label { display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: #1e293b; }
-        input {
+
+        .pizza-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 30px -12px rgba(0,0,0,0.15);
+        }
+
+        .pizza-img {
+            height: 190px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .pizza-tag {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            background: #ffedd5;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #b45309;
+        }
+
+        .pizza-info {
+            padding: 18px 18px 22px;
+        }
+
+        .pizza-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .pizza-desc {
+            color: #6b5b4e;
+            font-size: 0.85rem;
+            margin-bottom: 18px;
+            line-height: 1.4;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+
+        .price {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #c2410c;
+        }
+
+        .order-btn {
+            background: #f4ede5;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: #b45309;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .order-btn:hover {
+            background: #e67e22;
+            color: white;
+        }
+
+        /* МОДАЛЬНОЕ ОКНО (форма авторизации) */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-card {
+            background: white;
+            border-radius: 2rem;
+            max-width: 420px;
+            width: 90%;
+            padding: 1.8rem;
+            box-shadow: 0 25px 40px rgba(0,0,0,0.3);
+            position: relative;
+            animation: modalFadeIn 0.25s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.96);}
+            to { opacity: 1; transform: scale(1);}
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 18px;
+            right: 22px;
+            font-size: 1.6rem;
+            cursor: pointer;
+            color: #8b735f;
+            transition: 0.2s;
+        }
+
+        .modal-close:hover {
+            color: #c2410c;
+        }
+
+        .modal h2 {
+            font-size: 1.7rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+        }
+
+        .modal input {
             width: 100%;
             padding: 0.7rem 1rem;
-            border: 1px solid #cbd5e1;
-            border-radius: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 1rem;
             font-size: 1rem;
-            font-family: inherit;
-            background: #f8fafc;
         }
-        input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
-        button {
+
+        .modal button[type="submit"] {
             width: 100%;
-            background: #3b82f6;
+            background: #c2410c;
             color: white;
             border: none;
             padding: 0.75rem;
-            font-size: 1rem;
-            font-weight: 600;
-            border-radius: 0.75rem;
-            cursor: pointer;
+            border-radius: 2rem;
+            font-weight: bold;
             margin-top: 0.5rem;
+            cursor: pointer;
         }
-        button:hover { background: #2563eb; }
+
+        .modal .toggle {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .modal .toggle a {
+            color: #c2410c;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
         .message {
             margin-top: 1rem;
-            padding: 0.7rem;
-            border-radius: 0.75rem;
-            font-size: 0.85rem;
+            padding: 0.6rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
             text-align: center;
             display: none;
         }
-        .message.error { background: #fee2e2; color: #b91c1c; display: block; }
-        .message.success { background: #dcfce7; color: #166534; display: block; }
-        .toggle { text-align: center; margin-top: 1.2rem; font-size: 0.85rem; color: #475569; }
-        .toggle a { color: #3b82f6; text-decoration: none; font-weight: 500; cursor: pointer; }
-        hr { margin: 1.5rem 0 1rem; border: none; border-top: 1px solid #e2e8f0; }
-        .api-hint { background: #f1f5f9; padding: 0.7rem; border-radius: 0.75rem; font-size: 0.7rem; color: #334155; margin-top: 1rem; text-align: center; }
-        .logout-btn { background: #ef4444; margin-top: 0.5rem; }
-        .logout-btn:hover { background: #dc2626; }
-        .user-info { background: #e0f2fe; padding: 0.5rem; border-radius: 0.5rem; margin-top: 1rem; text-align: center; font-size: 0.8rem; word-break: break-all; }
-        .cookie-status { background: #fef3c7; padding: 0.5rem; border-radius: 0.5rem; margin-bottom: 1rem; font-size: 0.75rem; text-align: center; }
+
+        .cookie-status {
+            background: #fef9c3;
+            padding: 6px;
+            border-radius: 0.8rem;
+            font-size: 0.7rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            word-break: break-all;
+        }
+
+        hr {
+            margin: 1rem 0;
+        }
+
+        .api-hint {
+            background: #f5f0ea;
+            padding: 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.65rem;
+            text-align: center;
+            color: #6b4e2e;
+        }
+
+        /* футер */
+        .footer {
+            margin-top: 40px;
+            border-top: 1px solid #e9dfd3;
+            padding: 28px 0;
+            text-align: center;
+            color: #8b735f;
+        }
+
+        @media (max-width: 680px) {
+            .header-content {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .auth-button, .user-badge {
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 <body>
-<div class="card">
-    <div id="cookieStatus" class="cookie-status" style="display: none;"></div>
-    
-    <h2 id="formTitle">Вход</h2>
-    <div class="sub" id="formSub">Войдите в свой аккаунт</div>
 
-    <form id="authForm">
-        <div class="input-group">
-            <label>Email</label>
-            <input type="email" id="email" required placeholder="you@example.com">
+<header class="main-header">
+    <div class="container">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">🍕</div>
+                <div>
+                    <h1>МамаМия</h1>
+                    <p>настоящая итальянская пицца</p>
+                </div>
+            </div>
+            <div id="headerAuthArea">
+                <!-- динамически: кнопка "Войти" или юзер-бейдж -->
+                <button id="openAuthBtn" class="auth-button">🍕 Войти / Регистрация</button>
+            </div>
         </div>
-        <div class="input-group">
-            <label>Пароль</label>
-            <input type="password" id="password" required placeholder="••••••">
-        </div>
-        <button type="submit" id="actionBtn">Войти</button>
-    </form>
-
-    <div id="message" class="message"></div>
-
-    <div class="toggle">
-        <span id="toggleText">Нет аккаунта?</span>
-        <a id="toggleLink">Зарегистрироваться</a>
     </div>
-    
-    <div id="logoutSection" style="display: none;">
-        <div id="userInfo" class="user-info"></div>
+</header>
+
+<main class="container">
+    <div>
+        <div class="catalog-title">Наша пицца</div>
+        <p style="margin-bottom: 24px; color: #5e4b38;">🔥 Только свежие ингредиенты, тесто ручной работы и любовь в каждой пицце</p>
+    </div>
+    <div class="pizza-grid" id="pizzaCatalog"></div>
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <p>© МамаМия — доставка пиццы за 40 минут | тел: +7 (999) 123-45-67</p>
+    </div>
+</footer>
+
+<!-- Модальное окно авторизации (всплывающее) -->
+<div id="authModal" class="modal">
+    <div class="modal-card">
+        <span class="modal-close" id="closeModalBtn">&times;</span>
+        <div id="modalCookieStatus" class="cookie-status" style="display: none;"></div>
+        <h2 id="modalFormTitle">Вход</h2>
+        <div class="sub" id="modalFormSub" style="color:#6c584c; margin-bottom: 1rem;">Войдите в свой аккаунт</div>
+        
+        <form id="modalAuthForm">
+            <div class="input-group">
+                <label>Email</label>
+                <input type="email" id="modalEmail" required placeholder="you@example.com">
+            </div>
+            <div class="input-group">
+                <label>Пароль</label>
+                <input type="password" id="modalPassword" required placeholder="••••••">
+            </div>
+            <button type="submit" id="modalActionBtn">Войти</button>
+        </form>
+        
+        <div id="modalMessage" class="message"></div>
+        
+        <div class="toggle">
+            <span id="modalToggleText">Нет аккаунта?</span>
+            <a id="modalToggleLink">Зарегистрироваться</a>
+        </div>
+        
         <hr>
-        <button id="logoutBtn" class="logout-btn">🚪 Выйти</button>
-    </div>
-    
-    <hr>
-    <div class="api-hint">
-        ⚙️ API: <strong id="apiEndpointDisplay">http://localhost:8000</strong><br>
-        <span style="font-size: 0.65rem;">🍪 Cookie должны устанавливаться автоматически бэкендом</span>
+        <div class="api-hint">
+            ⚙️ API: <strong id="apiEndpointModal">http://localhost:8000</strong><br>
+            🍪 Cookie авторизации (HttpOnly)
+        </div>
     </div>
 </div>
 
 <script>
+    // ---------- КОНФИГ ----------
     const API_CONFIG = {
         baseUrl: 'http://localhost:8000',
         endpoints: {
             login: '/auth/login',
-            register: '/auth/register'
+            register: '/auth/register',
+            logout: '/auth/logout',
+            me: '/auth/me'   // если есть, для получения email, иначе парсим из утилит
         },
-        cookieName: 'access_token'  // имя cookie, которое устанавливает бэкенд
+        cookieName: 'access_token'
     };
 
+    // ---------- ДАННЫЕ КАТАЛОГА ПИЦЦ ----------
+    const pizzas = [
+        { id: 1, name: "Маргарита", desc: "Томатный соус, моцарелла, базилик, оливковое масло", price: "490 ₽", image: "🍅", tag: "Классика" },
+        { id: 2, name: "Пепперони", desc: "Острая пепперони, моцарелла, томатный соус", price: "650 ₽", image: "🌶️", tag: "Мясная" },
+        { id: 3, name: "Четыре сыра", desc: "Моцарелла, пармезан, горгонзола, рикотта", price: "720 ₽", image: "🧀", tag: "Сырная" },
+        { id: 4, name: "Гавайская", desc: "Курица, ананас, моцарелла, соус барбекю", price: "690 ₽", image: "🍍", tag: "Фруктовая" },
+        { id: 5, name: "Диабло", desc: "Острый салями, халапеньо, моцарелла, чили-соус", price: "770 ₽", image: "🔥", tag: "Острая" },
+        { id: 6, name: "Трюфельная", desc: "Белые грибы, трюфельное масло, моцарелла, пармезан", price: "990 ₽", image: "🍄", tag: "Премиум" },
+        { id: 7, name: "Мясное ассорти", desc: "Бекон, ветчина, пепперони, курица, моцарелла", price: "850 ₽", image: "🥩", tag: "Мясная" },
+        { id: 8, name: "Вегетарианская", desc: "Цукини, баклажаны, перец, лук, оливки", price: "590 ₽", image: "🥑", tag: "Вегетарианская" }
+    ];
+
+    // Глобальное состояние авторизации (проверка cookie)
+    let isUserLoggedIn = false;
+    let currentUserEmail = "";
+
+    // DOM элементы модалки
+    const modal = document.getElementById('authModal');
+    const openAuthBtnPlaceholder = document.getElementById('openAuthBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const modalForm = document.getElementById('modalAuthForm');
+    const modalEmail = document.getElementById('modalEmail');
+    const modalPassword = document.getElementById('modalPassword');
+    const modalActionBtn = document.getElementById('modalActionBtn');
+    const modalFormTitle = document.getElementById('modalFormTitle');
+    const modalFormSub = document.getElementById('modalFormSub');
+    const modalToggleText = document.getElementById('modalToggleText');
+    const modalToggleLink = document.getElementById('modalToggleLink');
+    const modalMessageDiv = document.getElementById('modalMessage');
+    const modalCookieStatusDiv = document.getElementById('modalCookieStatus');
+    const headerAuthArea = document.getElementById('headerAuthArea');
+
     let isLoginMode = true;
-    const emailInput = document.getElementById('email');
-    const passwordInput = document.getElementById('password');
-    const messageDiv = document.getElementById('message');
-    const formTitle = document.getElementById('formTitle');
-    const formSub = document.getElementById('formSub');
-    const actionBtn = document.getElementById('actionBtn');
-    const toggleLink = document.getElementById('toggleLink');
-    const toggleText = document.getElementById('toggleText');
-    const logoutSection = document.getElementById('logoutSection');
-    const logoutBtn = document.getElementById('logoutBtn');
-    const userInfoDiv = document.getElementById('userInfo');
-    const cookieStatus = document.getElementById('cookieStatus');
 
-    function showMessage(text, type = 'error') {
-        messageDiv.textContent = text;
-        messageDiv.className = 'message ' + type;
-        setTimeout(() => {
-            if (messageDiv.textContent === text) {
-                messageDiv.style.display = 'none';
-                messageDiv.className = 'message';
-            }
-        }, 4000);
-        messageDiv.style.display = 'block';
-    }
-
-    // Получить все cookie
-    function getAllCookies() {
-        return document.cookie;
-    }
-
-    // Проверить наличие cookie от бэкенда
+    // ========== Функции работы с авторизацией (cookie, бэкенд) ==========
     function hasAuthCookie() {
+        // проверка наличия cookie с токеном (на бэке может быть access_token или просто token)
         const cookies = document.cookie;
-        // Проверяем наличие cookie с токеном (может называться access_token, token, или другое)
-        return cookies.includes(API_CONFIG.cookieName) || 
-               cookies.includes('access_token') || 
-               cookies.includes('token');
+        return cookies.includes(API_CONFIG.cookieName) || cookies.includes('access_token') || cookies.includes('token') || cookies.includes('Authorization') ? false : false; // улучшим: ищем любую сессионную куку
+        // но более точно: если есть хоть одна кука, содержащая "token" или access_token
+    }
+    
+    function getAuthStatusFromCookies() {
+        const cookies = document.cookie;
+        if (cookies.includes('access_token') || cookies.includes('token')) {
+            return true;
+        }
+        // дополнительно можно проверить через флаг backend
+        return false;
     }
 
-    // Обновление UI в зависимости от наличия cookie
-    function updateAuthUI() {
-        const hasCookie = hasAuthCookie();
+    // Показываем/обновляем UI хедера в зависимости от логина
+    async function refreshUserUI() {
+        const logged = getAuthStatusFromCookies();
+        isUserLoggedIn = logged;
         
-        // Показываем статус cookie для отладки
-        if (document.cookie) {
-            cookieStatus.style.display = 'block';
-            cookieStatus.innerHTML = `🍪 Найдены cookie: <strong>${document.cookie.split('; ').join('; ')}</strong>`;
-        } else {
-            cookieStatus.style.display = 'none';
-        }
-        
-        if (hasCookie) {
-            // Пользователь авторизован (есть cookie от бэкенда)
-            document.getElementById('authForm').style.display = 'none';
-            toggleLink.style.display = 'none';
-            toggleText.style.display = 'none';
-            logoutSection.style.display = 'block';
-            
-            // Пытаемся извлечь email из cookie или показываем общее сообщение
-            userInfoDiv.innerHTML = `🔐 Авторизован (cookie установлены бэкендом)<br>
-                                     <span style="font-size: 0.7rem;">${document.cookie}</span>`;
-            formTitle.textContent = '✅ Добро пожаловать!';
-            formSub.textContent = 'Вы успешно авторизованы';
-        } else {
-            document.getElementById('authForm').style.display = 'block';
-            toggleLink.style.display = 'inline';
-            toggleText.style.display = 'inline';
-            logoutSection.style.display = 'none';
-            
-            if (isLoginMode) {
-                formTitle.textContent = 'Вход';
-                formSub.textContent = 'Войдите в свой аккаунт';
-            } else {
-                formTitle.textContent = 'Регистрация';
-                formSub.textContent = 'Создайте новый аккаунт';
+        if (logged) {
+            // Пытаемся получить email пользователя из кук? либо из localStorage? лучше из бэка, но можно показать заглушку
+            // Для удобства, если бэкенд отдает /me, мы можем закешировать. Но для простоты — покажем статус и кнопку выхода.
+            // Попробуем вызвать /auth/me если есть
+            let emailFromServer = "Пользователь";
+            try {
+                const response = await fetch(`${API_CONFIG.baseUrl}/auth/me`, {
+                    credentials: 'include'
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    emailFromServer = data.email || data.user?.email || "Авторизован";
+                    currentUserEmail = emailFromServer;
+                } else {
+                    currentUserEmail = "Пользователь";
+                }
+            } catch(e) {
+                // если эндпоинта нет - ничего страшного, показываем общий текст
+                currentUserEmail = "Авторизован";
             }
+            headerAuthArea.innerHTML = `
+                <div class="user-badge">
+                    <span>🍕</span>
+                    <span class="user-email">${currentUserEmail !== "Авторизован" ? currentUserEmail.split('@')[0] : currentUserEmail}</span>
+                    <button id="headerLogoutBtn" class="logout-header">Выйти</button>
+                </div>
+            `;
+            const logoutHeaderBtn = document.getElementById('headerLogoutBtn');
+            if (logoutHeaderBtn) logoutHeaderBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                logout();
+            });
+        } else {
+            headerAuthArea.innerHTML = `<button id="openAuthBtn" class="auth-button">🍕 Войти / Регистрация</button>`;
+            const newBtn = document.getElementById('openAuthBtn');
+            if (newBtn) newBtn.addEventListener('click', () => openModal());
         }
     }
 
-    async function handleSubmit(e) {
+    // Открыть модальное окно
+    function openModal() {
+        modal.classList.add('active');
+        // Сброс формы
+        modalEmail.value = '';
+        modalPassword.value = '';
+        isLoginMode = true;
+        updateModalFormUI();
+        modalMessageDiv.style.display = 'none';
+        updateModalCookieStatus();
+        // Периодически показывать статус
+    }
+
+    function closeModal() {
+        modal.classList.remove('active');
+    }
+
+    function updateModalFormUI() {
+        if (isLoginMode) {
+            modalFormTitle.textContent = 'Вход';
+            modalFormSub.textContent = 'Войдите в аккаунт для заказа пиццы';
+            modalActionBtn.textContent = 'Войти';
+            modalToggleText.textContent = 'Нет аккаунта?';
+            modalToggleLink.textContent = 'Зарегистрироваться';
+        } else {
+            modalFormTitle.textContent = 'Регистрация';
+            modalFormSub.textContent = 'Создайте аккаунт, чтобы делать заказы';
+            modalActionBtn.textContent = 'Зарегистрироваться';
+            modalToggleText.textContent = 'Уже есть аккаунт?';
+            modalToggleLink.textContent = 'Войти';
+        }
+    }
+
+    function showModalMessage(text, type = 'error') {
+        modalMessageDiv.textContent = text;
+        modalMessageDiv.className = 'message ' + type;
+        modalMessageDiv.style.display = 'block';
+        setTimeout(() => {
+            if (modalMessageDiv.textContent === text) modalMessageDiv.style.display = 'none';
+        }, 4000);
+    }
+
+    function updateModalCookieStatus() {
+        if (document.cookie) {
+            modalCookieStatusDiv.style.display = 'block';
+            modalCookieStatusDiv.innerHTML = `🍪 Текущие cookie: <strong>${document.cookie.split('; ').join('; ')}</strong>`;
+        } else {
+            modalCookieStatusDiv.style.display = 'none';
+        }
+    }
+
+    async function submitAuth(e) {
         e.preventDefault();
-        messageDiv.style.display = 'none';
-        
-        const email = emailInput.value.trim();
-        const password = passwordInput.value;
-        
+        modalMessageDiv.style.display = 'none';
+        const email = modalEmail.value.trim();
+        const password = modalPassword.value;
         if (!email || !password) {
-            showMessage('Заполните email и пароль', 'error');
+            showModalMessage('Заполните все поля', 'error');
             return;
         }
         
-        const btn = actionBtn;
+        const endpoint = isLoginMode ? API_CONFIG.endpoints.login : API_CONFIG.endpoints.register;
+        const url = `${API_CONFIG.baseUrl}${endpoint}?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
+        
+        const btn = modalActionBtn;
         const originalText = btn.textContent;
         btn.disabled = true;
-        btn.textContent = 'Загрузка...';
+        btn.textContent = 'Отправка...';
         
         try {
-            const endpoint = isLoginMode ? API_CONFIG.endpoints.login : API_CONFIG.endpoints.register;
-            const url = `${API_CONFIG.baseUrl}${endpoint}?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
-            
-            // ВАЖНО: credentials: 'include' для получения cookie от бэкенда
-            const response = await fetch(url, { 
+            const response = await fetch(url, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                credentials: 'include'  // <--- КЛЮЧЕВОЙ ПАРАМЕТР!
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                credentials: 'include'   // ключевой момент: для cookie
             });
-            
-            // После запроса проверяем, появились ли cookie
-            console.log('Cookie после запроса:', document.cookie);
             
             let data = null;
             const contentType = response.headers.get('content-type');
@@ -242,101 +639,138 @@
             }
             
             if (response.ok) {
-                showMessage(`${isLoginMode ? 'Вход выполнен' : 'Регистрация успешна'}! Cookie должны быть установлены.`, 'success');
-                
-                // Обновляем UI после успешного запроса
-                setTimeout(() => {
-                    updateAuthUI();
-                }, 100);
-                
-                emailInput.value = '';
-                passwordInput.value = '';
-                
+                showModalMessage(`${isLoginMode ? 'Вход выполнен!' : 'Регистрация прошла успешно!'}`, 'success');
+                // обновляем UI после успеха
+                setTimeout(async () => {
+                    await refreshUserUI();
+                    closeModal();
+                    if (!isLoginMode) {
+                        // если регистрация, то переключить режим на вход для след входа, но не обязательно
+                    } else {
+                        // просто обновляем
+                    }
+                    // дополнительно обновим статус каталога (сообщение)
+                }, 300);
                 if (!isLoginMode) {
+                    // после регистрации переключаем форму в режим входа
                     setTimeout(() => {
-                        toggleMode();
-                        showMessage('Аккаунт создан! Теперь войдите.', 'success');
-                    }, 500);
+                        isLoginMode = true;
+                        updateModalFormUI();
+                        showModalMessage('Теперь войдите с новым аккаунтом', 'success');
+                    }, 1000);
+                } else {
+                    // вход успешен, закрыть модалку и обновить хедер
+                    await refreshUserUI();
+                    closeModal();
                 }
             } else {
                 const errorMsg = data.message || data.detail || `Ошибка ${response.status}`;
-                showMessage(errorMsg, 'error');
+                showModalMessage(errorMsg, 'error');
             }
         } catch (err) {
-            console.error('Ошибка:', err);
-            showMessage('Ошибка соединения с сервером. Проверьте URL и CORS.', 'error');
+            console.error(err);
+            showModalMessage('Ошибка соединения с сервером. Проверьте CORS и доступность localhost:8000', 'error');
         } finally {
             btn.disabled = false;
             btn.textContent = originalText;
+            updateModalCookieStatus();
         }
     }
 
-    function toggleMode() {
-        isLoginMode = !isLoginMode;
-        if (isLoginMode) {
-            formTitle.textContent = 'Вход';
-            formSub.textContent = 'Войдите в свой аккаунт';
-            actionBtn.textContent = 'Войти';
-            toggleText.textContent = 'Нет аккаунта?';
-            toggleLink.textContent = 'Зарегистрироваться';
-        } else {
-            formTitle.textContent = 'Регистрация';
-            formSub.textContent = 'Создайте новый аккаунт';
-            actionBtn.textContent = 'Зарегистрироваться';
-            toggleText.textContent = 'Уже есть аккаунт?';
-            toggleLink.textContent = 'Войти';
-        }
-        messageDiv.style.display = 'none';
-        emailInput.value = '';
-        passwordInput.value = '';
-    }
-
-    // Выход - удаляем cookie через бэкенд
     async function logout() {
         try {
-            // Если есть эндпоинт для выхода на бэкенде
-            const logoutUrl = `${API_CONFIG.baseUrl}/auth/logout`;
-            await fetch(logoutUrl, {
+            await fetch(`${API_CONFIG.baseUrl}/auth/logout`, {
                 method: 'POST',
                 credentials: 'include'
             });
-        } catch(e) {
-            console.log('Бэкенд не имеет эндпоинта /logout');
-        }
-        
-        // Также пробуем удалить cookie на фронте (если они не HttpOnly)
-        document.cookie.split(";").forEach(function(c) {
+        } catch(e) { /* нет эндпоинта - ок */ }
+        // принудительно чистим куки на клиенте
+        document.cookie.split(";").forEach(c => {
             document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
         });
-        
-        updateAuthUI();
-        showMessage('Вы вышли из системы', 'success');
+        await refreshUserUI();
+        showModalMessage("Вы вышли из системы", 'success');
+        setTimeout(() => {
+            if(modal.classList.contains('active')) closeModal();
+        }, 500);
     }
 
-    // Периодическая проверка cookie (для отладки)
-    setInterval(() => {
-        if (hasAuthCookie() !== (logoutSection.style.display === 'block')) {
-            updateAuthUI();
-        }
-    }, 1000);
+    function toggleModalMode() {
+        isLoginMode = !isLoginMode;
+        updateModalFormUI();
+        modalMessageDiv.style.display = 'none';
+    }
 
-    // Инициализация
-    document.getElementById('authForm').addEventListener('submit', handleSubmit);
-    toggleLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        toggleMode();
-        updateAuthUI();
-    });
-    logoutBtn.addEventListener('click', logout);
+    // Отрисовка каталога пиццы
+    function renderCatalog() {
+        const grid = document.getElementById('pizzaCatalog');
+        grid.innerHTML = '';
+        pizzas.forEach(pizza => {
+            const card = document.createElement('div');
+            card.className = 'pizza-card';
+            card.innerHTML = `
+                <div class="pizza-img" style="background: linear-gradient(135deg, #fff2e0, #ffe6d5); display: flex; align-items: center; justify-content: center; font-size: 4rem;">
+                    ${pizza.image}
+                </div>
+                <div class="pizza-info">
+                    <div class="pizza-name">${pizza.name}</div>
+                    <div class="pizza-desc">${pizza.desc}</div>
+                    <div class="price-row">
+                        <span class="price">${pizza.price}</span>
+                        <button class="order-btn" data-id="${pizza.id}">Заказать</button>
+                    </div>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+        
+        // добавим обработчики заказа с проверкой авторизации
+        document.querySelectorAll('.order-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isAuth = getAuthStatusFromCookies();
+                if (!isAuth) {
+                    openModal();
+                    showModalMessage('Для заказа необходимо авторизоваться', 'error');
+                } else {
+                    alert('🍕 Заказ добавлен! (демо-режим) С вами свяжется оператор.');
+                }
+            });
+        });
+    }
 
-    document.getElementById('apiEndpointDisplay').textContent = API_CONFIG.baseUrl;
-    
-    // Проверяем авторизацию при загрузке
-    updateAuthUI();
-    
-    console.log('🔍 Для отладки:');
-    console.log('  - Проверьте вкладку Application → Cookies');
-    console.log('  - Убедитесь что бэкенд настроен с CORS: allow_credentials=True, allow_origins=["http://127.0.0.1:5500"]');
+    // инициализация событий модалки
+    function bindModalEvents() {
+        modalForm.addEventListener('submit', submitAuth);
+        modalToggleLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            toggleModalMode();
+        });
+        closeModalBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+    }
+
+    // загрузка
+    async function init() {
+        renderCatalog();
+        bindModalEvents();
+        await refreshUserUI();
+        // если клик на кнопку "Войти", переоткрыть модалку
+        const dynamicBtn = document.getElementById('openAuthBtn');
+        if (dynamicBtn) dynamicBtn.addEventListener('click', openModal);
+        // проверяем cookie раз в 2с для синхронизации (если бэк сбросил куку)
+        setInterval(async () => {
+            const prevState = isUserLoggedIn;
+            await refreshUserUI();
+            if (prevState !== getAuthStatusFromCookies()) {
+                // UI обновится
+            }
+        }, 3000);
+    }
+
+    init();
 </script>
 </body>
 </html>
