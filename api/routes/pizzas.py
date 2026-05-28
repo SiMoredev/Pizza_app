@@ -28,3 +28,10 @@ async def add_pizza(pizza: schemas.AddPizzas, db: AsyncSession = Depends(get_db)
     await db.refresh(new_pizza)
     
     return {"message": "Pizza added successfully!", "pizza_id": new_pizza.id}
+
+@pizzas_router.get("")
+async def get_all_pizzas(db: AsyncSession = Depends(get_db)):
+    query = select(PizzasCatalog)
+    result = await db.execute(query)
+    pizzas = result.scalars().all()
+    return pizzas

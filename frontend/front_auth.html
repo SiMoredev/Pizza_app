@@ -2,377 +2,215 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Пиццерия МамаМия | Каталог пиццы</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
             background: #fef9f0;
             color: #2d2a24;
         }
-
-        /* ----- Хедер с навигацией ----- */
         .main-header {
             background: #fff6ea;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             position: sticky;
             top: 0;
             z-index: 100;
-            backdrop-filter: blur(2px);
         }
-
-        .container {
-            max-width: 1300px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-
+        .container { max-width: 1300px; margin: 0 auto; padding: 0 24px; }
         .header-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 18px 0;
-            flex-wrap: wrap;
-            gap: 16px;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 18px 0; flex-wrap: wrap; gap: 16px;
         }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .logo-icon {
-            font-size: 2.2rem;
-        }
-
+        .logo { display: flex; align-items: center; gap: 12px; }
+        .logo-icon { font-size: 2.2rem; }
         .logo h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
+            font-size: 1.8rem; font-weight: 700;
             background: linear-gradient(135deg, #c0392b, #e67e22);
-            background-clip: text;
             -webkit-background-clip: text;
+            background-clip: text;
             color: transparent;
-            letter-spacing: -0.3px;
         }
-
-        .logo p {
-            font-size: 0.8rem;
-            color: #7f6b5a;
+        .logo p { font-size: 0.8rem; color: #7f6b5a; }
+        
+        .nav-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+        .nav-tab {
+            background: none; border: 2px solid transparent;
+            padding: 8px 16px; border-radius: 40px;
+            font-weight: 500; color: #7f6b5a; cursor: pointer;
+            transition: all 0.2s;
         }
-
+        .nav-tab:hover, .nav-tab.active {
+            background: #f4ede5; border-color: #e67e22; color: #c2410c;
+        }
+        .nav-tab.admin-only {
+            background: #fef3c7; border-color: #f59e0b; color: #92400e;
+            display: none;
+        }
+        .nav-tab.admin-only.visible { display: block; }
+        
         .auth-button {
-            background: #c2410c;
-            color: white;
-            border: none;
-            padding: 10px 24px;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            background: #c2410c; color: white; border: none;
+            padding: 10px 24px; border-radius: 50px;
+            font-weight: 600; cursor: pointer;
+            transition: all 0.2s;
         }
-
-        .auth-button:hover {
-            background: #9a3412;
-            transform: scale(1.02);
-        }
-
+        .auth-button:hover { background: #9a3412; transform: scale(1.02); }
+        
         .user-badge {
-            background: #f1e5d8;
-            padding: 8px 16px;
-            border-radius: 40px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 0.9rem;
-            font-weight: 500;
+            background: #f1e5d8; padding: 8px 16px;
+            border-radius: 40px; display: flex;
+            align-items: center; gap: 12px;
+            font-size: 0.9rem; font-weight: 500;
         }
-
-        .user-email {
-            color: #92400e;
-            max-width: 200px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+        .user-email { color: #92400e; }
+        .user-role {
+            background: #c2410c; color: white;
+            padding: 2px 10px; border-radius: 20px;
+            font-size: 0.7rem; font-weight: 600;
         }
-
-        .logout-header {
-            background: none;
-            border: 1px solid #c2410c;
-            color: #c2410c;
-            padding: 6px 16px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-weight: 500;
+        .logout-btn {
+            background: none; border: 1px solid #c2410c;
+            color: #c2410c; padding: 6px 16px;
+            border-radius: 30px; cursor: pointer;
             transition: 0.2s;
         }
-
-        .logout-header:hover {
-            background: #c2410c;
-            color: white;
-        }
-
-        /* Каталог пиццы */
+        .logout-btn:hover { background: #c2410c; color: white; }
+        
+        .content-section { display: none; animation: fadeIn 0.3s; }
+        .content-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
         .catalog-title {
-            font-size: 2.2rem;
-            font-weight: 800;
-            margin: 40px 0 16px 0;
-            position: relative;
-            display: inline-block;
+            font-size: 2.2rem; font-weight: 800;
+            margin: 40px 0 16px;
         }
-        .catalog-title:after {
-            content: '';
-            display: block;
-            width: 70px;
-            height: 4px;
-            background: #e67e22;
-            margin-top: 8px;
-            border-radius: 4px;
-        }
-
         .pizza-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 32px;
-            margin: 30px 0 60px;
+            gap: 32px; margin: 30px 0 60px;
         }
-
         .pizza-card {
-            background: white;
-            border-radius: 28px;
-            overflow: hidden;
-            transition: all 0.25s ease;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-            cursor: pointer;
-            border: 1px solid #f3e5d8;
+            background: white; border-radius: 28px;
+            overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            transition: all 0.25s; border: 1px solid #f3e5d8;
         }
-
         .pizza-card:hover {
             transform: translateY(-6px);
-            box-shadow: 0 20px 30px -12px rgba(0,0,0,0.15);
+            box-shadow: 0 20px 30px rgba(0,0,0,0.15);
         }
-
         .pizza-img {
-            height: 190px;
-            background-size: cover;
-            background-position: center;
-            position: relative;
+            height: 190px; display: flex;
+            align-items: center; justify-content: center;
+            font-size: 4rem; background: linear-gradient(135deg, #fff2e0, #ffe6d5);
         }
-
-        .pizza-tag {
-            position: absolute;
-            top: 14px;
-            left: 14px;
-            background: #ffedd5;
-            padding: 4px 12px;
-            border-radius: 40px;
-            font-size: 0.7rem;
-            font-weight: bold;
-            color: #b45309;
-        }
-
-        .pizza-info {
-            padding: 18px 18px 22px;
-        }
-
-        .pizza-name {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        .pizza-desc {
-            color: #6b5b4e;
-            font-size: 0.85rem;
-            margin-bottom: 18px;
-            line-height: 1.4;
-        }
-
-        .price-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-        }
-
-        .price {
-            font-size: 1.6rem;
-            font-weight: 800;
-            color: #c2410c;
-        }
-
+        .pizza-info { padding: 18px; }
+        .pizza-name { font-size: 1.5rem; font-weight: 700; margin-bottom: 8px; }
+        .pizza-desc { color: #6b5b4e; font-size: 0.85rem; margin-bottom: 18px; line-height: 1.4; }
+        .price-row { display: flex; justify-content: space-between; align-items: baseline; }
+        .price { font-size: 1.6rem; font-weight: 800; color: #c2410c; }
         .order-btn {
-            background: #f4ede5;
-            border: none;
-            padding: 8px 18px;
-            border-radius: 40px;
-            font-weight: 600;
-            color: #b45309;
-            cursor: pointer;
-            transition: 0.2s;
+            background: #f4ede5; border: none; padding: 8px 18px;
+            border-radius: 40px; font-weight: 600; color: #b45309;
+            cursor: pointer; transition: 0.2s;
         }
-
-        .order-btn:hover {
-            background: #e67e22;
-            color: white;
+        .order-btn:hover { background: #e67e22; color: white; }
+        
+        .add-pizza-form {
+            background: white; border-radius: 24px;
+            padding: 28px; max-width: 600px; margin: 30px auto;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
         }
-
-        /* МОДАЛЬНОЕ ОКНО (форма авторизации) */
+        .form-title {
+            font-size: 1.8rem; font-weight: 700;
+            margin-bottom: 20px; color: #c2410c; text-align: center;
+        }
+        .form-group { margin-bottom: 18px; }
+        .form-group label {
+            display: block; font-size: 0.9rem;
+            font-weight: 600; margin-bottom: 6px; color: #5e4b38;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 12px 16px;
+            border: 2px solid #e9dfd3; border-radius: 12px;
+            font-size: 1rem; transition: border-color 0.2s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none; border-color: #e67e22;
+        }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .submit-btn {
+            width: 100%; background: #c2410c; color: white;
+            border: none; padding: 14px; border-radius: 50px;
+            font-weight: 700; font-size: 1.1rem;
+            cursor: pointer; transition: 0.2s; margin-top: 10px;
+        }
+        .submit-btn:hover { background: #9a3412; }
+        .submit-btn:disabled { background: #d1d5db; cursor: not-allowed; }
+        .form-message {
+            margin-top: 16px; padding: 12px;
+            border-radius: 12px; text-align: center;
+            font-weight: 500; display: none;
+        }
+        .form-message.success { background: #dcfce7; color: #166534; }
+        .form-message.error { background: #fee2e2; color: #991b1b; }
+        
         .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(4px);
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+            align-items: center; justify-content: center; z-index: 1000;
         }
-
-        .modal.active {
-            display: flex;
-        }
-
+        .modal.active { display: flex; }
         .modal-card {
-            background: white;
-            border-radius: 2rem;
-            max-width: 420px;
-            width: 90%;
-            padding: 1.8rem;
+            background: white; border-radius: 2rem;
+            max-width: 420px; width: 90%; padding: 1.8rem;
             box-shadow: 0 25px 40px rgba(0,0,0,0.3);
-            position: relative;
-            animation: modalFadeIn 0.25s ease;
+            position: relative; animation: modalFadeIn 0.25s;
         }
-
-        @keyframes modalFadeIn {
-            from { opacity: 0; transform: scale(0.96);}
-            to { opacity: 1; transform: scale(1);}
-        }
-
+        @keyframes modalFadeIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
         .modal-close {
-            position: absolute;
-            top: 18px;
-            right: 22px;
-            font-size: 1.6rem;
-            cursor: pointer;
-            color: #8b735f;
-            transition: 0.2s;
+            position: absolute; top: 18px; right: 22px;
+            font-size: 1.6rem; cursor: pointer; color: #8b735f;
         }
-
-        .modal-close:hover {
-            color: #c2410c;
-        }
-
-        .modal h2 {
-            font-size: 1.7rem;
-            margin-bottom: 0.3rem;
-        }
-
-        .input-group {
-            margin-bottom: 1.2rem;
-        }
-
+        .modal-close:hover { color: #c2410c; }
+        .modal h2 { font-size: 1.7rem; margin-bottom: 0.3rem; }
+        .input-group { margin-bottom: 1.2rem; }
         .input-group label {
-            display: block;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-bottom: 0.4rem;
+            display: block; font-size: 0.8rem;
+            font-weight: 600; margin-bottom: 0.4rem;
         }
-
         .modal input {
-            width: 100%;
-            padding: 0.7rem 1rem;
-            border: 1px solid #ddd;
-            border-radius: 1rem;
-            font-size: 1rem;
+            width: 100%; padding: 0.7rem 1rem;
+            border: 1px solid #ddd; border-radius: 1rem; font-size: 1rem;
         }
-
         .modal button[type="submit"] {
-            width: 100%;
-            background: #c2410c;
-            color: white;
-            border: none;
-            padding: 0.75rem;
-            border-radius: 2rem;
-            font-weight: bold;
-            margin-top: 0.5rem;
-            cursor: pointer;
+            width: 100%; background: #c2410c; color: white;
+            border: none; padding: 0.75rem; border-radius: 2rem;
+            font-weight: bold; margin-top: 0.5rem; cursor: pointer;
         }
-
-        .modal .toggle {
-            text-align: center;
-            margin-top: 1rem;
-            font-size: 0.85rem;
-        }
-
-        .modal .toggle a {
-            color: #c2410c;
-            cursor: pointer;
-            font-weight: 500;
-        }
-
+        .modal .toggle { text-align: center; margin-top: 1rem; font-size: 0.85rem; }
+        .modal .toggle a { color: #c2410c; cursor: pointer; font-weight: 500; }
         .message {
-            margin-top: 1rem;
-            padding: 0.6rem;
-            border-radius: 1rem;
-            font-size: 0.8rem;
-            text-align: center;
-            display: none;
+            margin-top: 1rem; padding: 0.6rem;
+            border-radius: 1rem; font-size: 0.8rem;
+            text-align: center; display: none;
         }
-
-        .cookie-status {
-            background: #fef9c3;
-            padding: 6px;
-            border-radius: 0.8rem;
-            font-size: 0.7rem;
-            text-align: center;
-            margin-bottom: 1rem;
-            word-break: break-all;
-        }
-
-        hr {
-            margin: 1rem 0;
-        }
-
-        .api-hint {
-            background: #f5f0ea;
-            padding: 0.5rem;
-            border-radius: 1rem;
-            font-size: 0.65rem;
-            text-align: center;
-            color: #6b4e2e;
-        }
-
-        /* футер */
         .footer {
-            margin-top: 40px;
-            border-top: 1px solid #e9dfd3;
-            padding: 28px 0;
-            text-align: center;
-            color: #8b735f;
+            margin-top: 40px; border-top: 1px solid #e9dfd3;
+            padding: 28px 0; text-align: center; color: #8b735f;
         }
-
+        .loading {
+            text-align: center; padding: 40px; color: #7f6b5a;
+        }
+        
         @media (max-width: 680px) {
-            .header-content {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .auth-button, .user-badge {
-                justify-content: center;
-            }
+            .header-content { flex-direction: column; align-items: stretch; }
+            .auth-button, .user-badge { justify-content: center; }
+            .form-row { grid-template-columns: 1fr; }
+            .nav-tabs { justify-content: center; }
         }
     </style>
 </head>
@@ -388,389 +226,430 @@
                     <p>настоящая итальянская пицца</p>
                 </div>
             </div>
+            
+            <nav class="nav-tabs">
+                <button class="nav-tab active" onclick="switchTab('catalog')">🍕 Каталог</button>
+                <button class="nav-tab admin-only" id="adminTab" onclick="switchTab('addPizza')">➕ Добавить пиццу</button>
+            </nav>
+            
             <div id="headerAuthArea">
-                <!-- динамически: кнопка "Войти" или юзер-бейдж -->
-                <button id="openAuthBtn" class="auth-button">🍕 Войти / Регистрация</button>
+                <button class="auth-button" onclick="openModal()">🍕 Войти / Регистрация</button>
             </div>
         </div>
     </div>
 </header>
 
 <main class="container">
-    <div>
-        <div class="catalog-title">Наша пицца</div>
-        <p style="margin-bottom: 24px; color: #5e4b38;">🔥 Только свежие ингредиенты, тесто ручной работы и любовь в каждой пицце</p>
-    </div>
-    <div class="pizza-grid" id="pizzaCatalog"></div>
+    <!-- Каталог -->
+    <section id="catalog-section" class="content-section active">
+        <h2 class="catalog-title">Наша пицца</h2>
+        <p style="margin-bottom: 24px; color: #5e4b38;">🔥 Только свежие ингредиенты</p>
+        <div id="pizzaLoading" class="loading">Загрузка пицц...</div>
+        <div class="pizza-grid" id="pizzaCatalog"></div>
+    </section>
+
+    <!-- Добавление пиццы -->
+    <section id="add-pizza-section" class="content-section">
+        <h2 class="catalog-title">Добавить пиццу</h2>
+        <p style="margin-bottom: 24px; color: #5e4b38;">📝 Заполните форму</p>
+        
+        <form id="addPizzaForm" class="add-pizza-form">
+            <div class="form-group">
+                <label>Название пиццы *</label>
+                <input type="text" id="namePizza" required placeholder="Например: Маргарита">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Цена (руб) *</label>
+                    <input type="number" id="cost" required min="0" placeholder="450">
+                </div>
+                <div class="form-group">
+                    <label>Размер (см) *</label>
+                    <select id="size" required>
+                        <option value="25">25 см (Маленькая)</option>
+                        <option value="30" selected>30 см (Средняя)</option>
+                        <option value="35">35 см (Большая)</option>
+                        <option value="40">40 см (Огромная)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Ингредиенты *</label>
+                <textarea id="ingredients" required placeholder="Томатный соус, моцарелла, базилик"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>URL картинки</label>
+                <input type="url" id="picturePizza" placeholder="https://example.com/pizza.jpg">
+            </div>
+
+            <div class="form-group">
+                <label>Толщина теста *</label>
+                <select id="thicknessDough" required>
+                    <option value="true">Тонкое</option>
+                    <option value="false">Толстое</option>
+                </select>
+            </div>
+
+            <button type="submit" class="submit-btn" id="addPizzaBtn">➕ Добавить пиццу</button>
+            <div id="addPizzaMessage" class="form-message"></div>
+        </form>
+    </section>
 </main>
 
 <footer class="footer">
     <div class="container">
-        <p>© МамаМия — доставка пиццы за 40 минут | тел: +7 (999) 123-45-67</p>
+        <p>© МамаМия — доставка пиццы за 40 минут</p>
     </div>
 </footer>
 
-<!-- Модальное окно авторизации (всплывающее) -->
+<!-- Модальное окно -->
 <div id="authModal" class="modal">
     <div class="modal-card">
-        <span class="modal-close" id="closeModalBtn">&times;</span>
-        <div id="modalCookieStatus" class="cookie-status" style="display: none;"></div>
-        <h2 id="modalFormTitle">Вход</h2>
-        <div class="sub" id="modalFormSub" style="color:#6c584c; margin-bottom: 1rem;">Войдите в свой аккаунт</div>
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <h2 id="modalTitle">Вход</h2>
+        <p id="modalSub" style="color:#6c584c; margin-bottom: 1rem;">Войдите в аккаунт</p>
         
-        <form id="modalAuthForm">
+        <form id="authForm">
             <div class="input-group">
                 <label>Email</label>
-                <input type="email" id="modalEmail" required placeholder="you@example.com">
+                <input type="email" id="email" required placeholder="you@example.com">
             </div>
             <div class="input-group">
                 <label>Пароль</label>
-                <input type="password" id="modalPassword" required placeholder="••••••">
+                <input type="password" id="password" required placeholder="••••••">
             </div>
-            <button type="submit" id="modalActionBtn">Войти</button>
+            <button type="submit" id="authBtn">Войти</button>
         </form>
         
         <div id="modalMessage" class="message"></div>
         
         <div class="toggle">
-            <span id="modalToggleText">Нет аккаунта?</span>
-            <a id="modalToggleLink">Зарегистрироваться</a>
-        </div>
-        
-        <hr>
-        <div class="api-hint">
-            ⚙️ API: <strong id="apiEndpointModal">http://localhost:8000</strong><br>
-            🍪 Cookie авторизации (HttpOnly)
+            <span id="toggleText">Нет аккаунта?</span>
+            <a id="toggleLink" onclick="toggleMode()">Зарегистрироваться</a>
         </div>
     </div>
 </div>
 
 <script>
-    // ---------- КОНФИГ ----------
-    const API_CONFIG = {
-        baseUrl: 'http://localhost:8000',
-        endpoints: {
-            login: '/auth/login',
-            register: '/auth/register',
-            logout: '/auth/logout',
-            me: '/auth/me'   // если есть, для получения email, иначе парсим из утилит
-        },
-        cookieName: 'access_token'
-    };
-
-    // ---------- ДАННЫЕ КАТАЛОГА ПИЦЦ ----------
-    const pizzas = [
-        { id: 1, name: "Маргарита", desc: "Томатный соус, моцарелла, базилик, оливковое масло", price: "490 ₽", image: "🍅", tag: "Классика" },
-        { id: 2, name: "Пепперони", desc: "Острая пепперони, моцарелла, томатный соус", price: "650 ₽", image: "🌶️", tag: "Мясная" },
-        { id: 3, name: "Четыре сыра", desc: "Моцарелла, пармезан, горгонзола, рикотта", price: "720 ₽", image: "🧀", tag: "Сырная" },
-        { id: 4, name: "Гавайская", desc: "Курица, ананас, моцарелла, соус барбекю", price: "690 ₽", image: "🍍", tag: "Фруктовая" },
-        { id: 5, name: "Диабло", desc: "Острый салями, халапеньо, моцарелла, чили-соус", price: "770 ₽", image: "🔥", tag: "Острая" },
-        { id: 6, name: "Трюфельная", desc: "Белые грибы, трюфельное масло, моцарелла, пармезан", price: "990 ₽", image: "🍄", tag: "Премиум" },
-        { id: 7, name: "Мясное ассорти", desc: "Бекон, ветчина, пепперони, курица, моцарелла", price: "850 ₽", image: "🥩", tag: "Мясная" },
-        { id: 8, name: "Вегетарианская", desc: "Цукини, баклажаны, перец, лук, оливки", price: "590 ₽", image: "🥑", tag: "Вегетарианская" }
-    ];
-
-    // Глобальное состояние авторизации (проверка cookie)
-    let isUserLoggedIn = false;
-    let currentUserEmail = "";
-
-    // DOM элементы модалки
-    const modal = document.getElementById('authModal');
-    const openAuthBtnPlaceholder = document.getElementById('openAuthBtn');
-    const closeModalBtn = document.getElementById('closeModalBtn');
-    const modalForm = document.getElementById('modalAuthForm');
-    const modalEmail = document.getElementById('modalEmail');
-    const modalPassword = document.getElementById('modalPassword');
-    const modalActionBtn = document.getElementById('modalActionBtn');
-    const modalFormTitle = document.getElementById('modalFormTitle');
-    const modalFormSub = document.getElementById('modalFormSub');
-    const modalToggleText = document.getElementById('modalToggleText');
-    const modalToggleLink = document.getElementById('modalToggleLink');
-    const modalMessageDiv = document.getElementById('modalMessage');
-    const modalCookieStatusDiv = document.getElementById('modalCookieStatus');
-    const headerAuthArea = document.getElementById('headerAuthArea');
-
+    const API_URL = 'http://localhost:8000';
+    let currentUser = { email: '', role: '', isLoggedIn: false };
     let isLoginMode = true;
-
-    // ========== Функции работы с авторизацией (cookie, бэкенд) ==========
-    function hasAuthCookie() {
-        // проверка наличия cookie с токеном (на бэке может быть access_token или просто token)
-        const cookies = document.cookie;
-        return cookies.includes(API_CONFIG.cookieName) || cookies.includes('access_token') || cookies.includes('token') || cookies.includes('Authorization') ? false : false; // улучшим: ищем любую сессионную куку
-        // но более точно: если есть хоть одна кука, содержащая "token" или access_token
+    let allPizzas = []; // Здесь храним пиццы из БД
+    
+    // Переключение вкладок
+    function switchTab(tab) {
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+        
+        if (tab === 'catalog') {
+            document.querySelector('.nav-tab:first-child').classList.add('active');
+            document.getElementById('catalog-section').classList.add('active');
+        } else {
+            document.getElementById('adminTab').classList.add('active');
+            document.getElementById('add-pizza-section').classList.add('active');
+        }
     }
     
-    function getAuthStatusFromCookies() {
-        const cookies = document.cookie;
-        if (cookies.includes('access_token') || cookies.includes('token')) {
-            return true;
-        }
-        // дополнительно можно проверить через флаг backend
-        return false;
-    }
-
-    // Показываем/обновляем UI хедера в зависимости от логина
-    async function refreshUserUI() {
-        const logged = getAuthStatusFromCookies();
-        isUserLoggedIn = logged;
+    // ✅ ЗАГРУЗКА ПИЦЦ ИЗ БД
+    async function loadPizzas() {
+        const loading = document.getElementById('pizzaLoading');
+        const grid = document.getElementById('pizzaCatalog');
         
-        if (logged) {
-            // Пытаемся получить email пользователя из кук? либо из localStorage? лучше из бэка, но можно показать заглушку
-            // Для удобства, если бэкенд отдает /me, мы можем закешировать. Но для простоты — покажем статус и кнопку выхода.
-            // Попробуем вызвать /auth/me если есть
-            let emailFromServer = "Пользователь";
-            try {
-                const response = await fetch(`${API_CONFIG.baseUrl}/auth/me`, {
-                    credentials: 'include'
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    emailFromServer = data.email || data.user?.email || "Авторизован";
-                    currentUserEmail = emailFromServer;
-                } else {
-                    currentUserEmail = "Пользователь";
-                }
-            } catch(e) {
-                // если эндпоинта нет - ничего страшного, показываем общий текст
-                currentUserEmail = "Авторизован";
-            }
-            headerAuthArea.innerHTML = `
-                <div class="user-badge">
-                    <span>🍕</span>
-                    <span class="user-email">${currentUserEmail !== "Авторизован" ? currentUserEmail.split('@')[0] : currentUserEmail}</span>
-                    <button id="headerLogoutBtn" class="logout-header">Выйти</button>
-                </div>
-            `;
-            const logoutHeaderBtn = document.getElementById('headerLogoutBtn');
-            if (logoutHeaderBtn) logoutHeaderBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                logout();
+        try {
+            loading.style.display = 'block';
+            grid.innerHTML = '';
+            
+            const response = await fetch(`${API_URL}/pizzas`, {
+                headers: { 'Accept': 'application/json' }
             });
-        } else {
-            headerAuthArea.innerHTML = `<button id="openAuthBtn" class="auth-button">🍕 Войти / Регистрация</button>`;
-            const newBtn = document.getElementById('openAuthBtn');
-            if (newBtn) newBtn.addEventListener('click', () => openModal());
+            
+            if (response.ok) {
+                allPizzas = await response.json();
+                console.log('✅ Загружено пицц:', allPizzas.length);
+                renderCatalog();
+            } else {
+                console.error('❌ Ошибка загрузки пицц');
+                grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">Ошибка загрузки</p>';
+            }
+        } catch (error) {
+            console.error('💥 Ошибка:', error);
+            grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">Ошибка соединения</p>';
+        } finally {
+            loading.style.display = 'none';
         }
     }
-
-    // Открыть модальное окно
-    function openModal() {
-        modal.classList.add('active');
-        // Сброс формы
-        modalEmail.value = '';
-        modalPassword.value = '';
-        isLoginMode = true;
-        updateModalFormUI();
-        modalMessageDiv.style.display = 'none';
-        updateModalCookieStatus();
-        // Периодически показывать статус
-    }
-
-    function closeModal() {
-        modal.classList.remove('active');
-    }
-
-    function updateModalFormUI() {
-        if (isLoginMode) {
-            modalFormTitle.textContent = 'Вход';
-            modalFormSub.textContent = 'Войдите в аккаунт для заказа пиццы';
-            modalActionBtn.textContent = 'Войти';
-            modalToggleText.textContent = 'Нет аккаунта?';
-            modalToggleLink.textContent = 'Зарегистрироваться';
-        } else {
-            modalFormTitle.textContent = 'Регистрация';
-            modalFormSub.textContent = 'Создайте аккаунт, чтобы делать заказы';
-            modalActionBtn.textContent = 'Зарегистрироваться';
-            modalToggleText.textContent = 'Уже есть аккаунт?';
-            modalToggleLink.textContent = 'Войти';
-        }
-    }
-
-    function showModalMessage(text, type = 'error') {
-        modalMessageDiv.textContent = text;
-        modalMessageDiv.className = 'message ' + type;
-        modalMessageDiv.style.display = 'block';
-        setTimeout(() => {
-            if (modalMessageDiv.textContent === text) modalMessageDiv.style.display = 'none';
-        }, 4000);
-    }
-
-    function updateModalCookieStatus() {
-        if (document.cookie) {
-            modalCookieStatusDiv.style.display = 'block';
-            modalCookieStatusDiv.innerHTML = `🍪 Текущие cookie: <strong>${document.cookie.split('; ').join('; ')}</strong>`;
-        } else {
-            modalCookieStatusDiv.style.display = 'none';
-        }
-    }
-
-    async function submitAuth(e) {
-        e.preventDefault();
-        modalMessageDiv.style.display = 'none';
-        const email = modalEmail.value.trim();
-        const password = modalPassword.value;
-        if (!email || !password) {
-            showModalMessage('Заполните все поля', 'error');
+    
+    // Отрисовка каталога
+    function renderCatalog() {
+        const grid = document.getElementById('pizzaCatalog');
+        
+        if (allPizzas.length === 0) {
+            grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #7f6b5a;">Пока нет пицц в меню</p>';
             return;
         }
         
-        const endpoint = isLoginMode ? API_CONFIG.endpoints.login : API_CONFIG.endpoints.register;
-        const url = `${API_CONFIG.baseUrl}${endpoint}?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
+        grid.innerHTML = allPizzas.map(pizza => {
+            // Эмодзи по умолчанию или из картинки
+            let emoji = '🍕';
+            if (pizza.namePizza?.toLowerCase().includes('маргарит')) emoji = '🍅';
+            else if (pizza.namePizza?.toLowerCase().includes('пепперони')) emoji = '🌶️';
+            else if (pizza.namePizza?.toLowerCase().includes('сыр')) emoji = '🧀';
+            else if (pizza.namePizza?.toLowerCase().includes('гавай')) emoji = '🍍';
+            
+            return `
+                <div class="pizza-card">
+                    <div class="pizza-img">${emoji}</div>
+                    <div class="pizza-info">
+                        <div class="pizza-name">${pizza.namePizza}</div>
+                        <div class="pizza-desc">${pizza.ingredients}</div>
+                        <div class="price-row">
+                            <span class="price">${pizza.cost} ₽</span>
+                            <button class="order-btn" onclick="orderPizza(${pizza.id})">Заказать</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    // Проверка авторизации
+    async function checkAuth() {
+        try {
+            const response = await fetch(`${API_URL}/auth/me`, {
+                credentials: 'include',
+                headers: { 'Accept': 'application/json' }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                currentUser = {
+                    email: data.email || data.sub || '',
+                    role: data.role || 'user',
+                    isLoggedIn: true
+                };
+                updateHeader();
+            } else {
+                currentUser = { email: '', role: '', isLoggedIn: false };
+                updateHeader();
+            }
+        } catch (error) {
+            currentUser = { email: '', role: '', isLoggedIn: false };
+            updateHeader();
+        }
+    }
+    
+    // Обновление хедера
+    function updateHeader() {
+        const authArea = document.getElementById('headerAuthArea');
+        const adminTab = document.getElementById('adminTab');
         
-        const btn = modalActionBtn;
-        const originalText = btn.textContent;
+        if (currentUser.isLoggedIn) {
+            const emailShort = currentUser.email.split('@')[0];
+            const roleBadge = currentUser.role === 'admin' ? '<span class="user-role">ADMIN</span>' : '';
+            
+            authArea.innerHTML = `
+                <div class="user-badge">
+                    <span>🍕</span>
+                    <span class="user-email">${emailShort}</span>
+                    ${roleBadge}
+                    <button class="logout-btn" onclick="logout()">Выйти</button>
+                </div>
+            `;
+            
+            if (currentUser.role === 'admin') {
+                adminTab.classList.add('visible');
+            } else {
+                adminTab.classList.remove('visible');
+            }
+        } else {
+            authArea.innerHTML = '<button class="auth-button" onclick="openModal()">🍕 Войти / Регистрация</button>';
+            adminTab.classList.remove('visible');
+        }
+    }
+    
+    // Вход/Регистрация
+    document.getElementById('authForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const btn = document.getElementById('authBtn');
+        const message = document.getElementById('modalMessage');
+        
         btn.disabled = true;
-        btn.textContent = 'Отправка...';
+        btn.textContent = 'Загрузка...';
+        message.style.display = 'none';
+        
+        const endpoint = isLoginMode ? '/auth/login' : '/auth/register';
+        const url = `${API_URL}${endpoint}?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
         
         try {
             const response = await fetch(url, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                credentials: 'include'   // ключевой момент: для cookie
+                credentials: 'include'
             });
             
-            let data = null;
-            const contentType = response.headers.get('content-type');
-            if (contentType && contentType.includes('application/json')) {
-                data = await response.json();
-            } else {
-                const text = await response.text();
-                data = { message: text || 'Ответ сервера' };
-            }
+            const data = await response.json();
             
             if (response.ok) {
-                showModalMessage(`${isLoginMode ? 'Вход выполнен!' : 'Регистрация прошла успешно!'}`, 'success');
-                // обновляем UI после успеха
-                setTimeout(async () => {
-                    await refreshUserUI();
-                    closeModal();
-                    if (!isLoginMode) {
-                        // если регистрация, то переключить режим на вход для след входа, но не обязательно
-                    } else {
-                        // просто обновляем
-                    }
-                    // дополнительно обновим статус каталога (сообщение)
-                }, 300);
-                if (!isLoginMode) {
-                    // после регистрации переключаем форму в режим входа
-                    setTimeout(() => {
-                        isLoginMode = true;
-                        updateModalFormUI();
-                        showModalMessage('Теперь войдите с новым аккаунтом', 'success');
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                if (isLoginMode) {
+                    message.textContent = '✅ Вход выполнен!';
+                    message.className = 'message success';
+                    message.style.display = 'block';
+                    
+                    setTimeout(async () => {
+                        closeModal();
+                        await checkAuth();
                     }, 1000);
                 } else {
-                    // вход успешен, закрыть модалку и обновить хедер
-                    await refreshUserUI();
-                    closeModal();
+                    message.textContent = '✅ Регистрация успешна! Теперь войдите.';
+                    message.className = 'message success';
+                    message.style.display = 'block';
+                    
+                    setTimeout(() => {
+                        isLoginMode = true;
+                        updateModal();
+                        document.getElementById('email').value = email;
+                        document.getElementById('password').value = '';
+                    }, 1500);
                 }
             } else {
-                const errorMsg = data.message || data.detail || `Ошибка ${response.status}`;
-                showModalMessage(errorMsg, 'error');
+                message.textContent = data.detail || data.message || 'Ошибка';
+                message.className = 'message error';
+                message.style.display = 'block';
             }
-        } catch (err) {
-            console.error(err);
-            showModalMessage('Ошибка соединения с сервером. Проверьте CORS и доступность localhost:8000', 'error');
+        } catch (error) {
+            message.textContent = 'Ошибка соединения';
+            message.className = 'message error';
+            message.style.display = 'block';
         } finally {
             btn.disabled = false;
-            btn.textContent = originalText;
-            updateModalCookieStatus();
+            btn.textContent = isLoginMode ? 'Войти' : 'Зарегистрироваться';
         }
-    }
-
+    });
+    
+    // Выход
     async function logout() {
         try {
-            await fetch(`${API_CONFIG.baseUrl}/auth/logout`, {
+            await fetch(`${API_URL}/auth/logout`, {
                 method: 'POST',
                 credentials: 'include'
             });
-        } catch(e) { /* нет эндпоинта - ок */ }
-        // принудительно чистим куки на клиенте
+        } catch(e) {}
+        
         document.cookie.split(";").forEach(c => {
             document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
         });
-        await refreshUserUI();
-        showModalMessage("Вы вышли из системы", 'success');
-        setTimeout(() => {
-            if(modal.classList.contains('active')) closeModal();
-        }, 500);
-    }
-
-    function toggleModalMode() {
-        isLoginMode = !isLoginMode;
-        updateModalFormUI();
-        modalMessageDiv.style.display = 'none';
-    }
-
-    // Отрисовка каталога пиццы
-    function renderCatalog() {
-        const grid = document.getElementById('pizzaCatalog');
-        grid.innerHTML = '';
-        pizzas.forEach(pizza => {
-            const card = document.createElement('div');
-            card.className = 'pizza-card';
-            card.innerHTML = `
-                <div class="pizza-img" style="background: linear-gradient(135deg, #fff2e0, #ffe6d5); display: flex; align-items: center; justify-content: center; font-size: 4rem;">
-                    ${pizza.image}
-                </div>
-                <div class="pizza-info">
-                    <div class="pizza-name">${pizza.name}</div>
-                    <div class="pizza-desc">${pizza.desc}</div>
-                    <div class="price-row">
-                        <span class="price">${pizza.price}</span>
-                        <button class="order-btn" data-id="${pizza.id}">Заказать</button>
-                    </div>
-                </div>
-            `;
-            grid.appendChild(card);
-        });
         
-        // добавим обработчики заказа с проверкой авторизации
-        document.querySelectorAll('.order-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const isAuth = getAuthStatusFromCookies();
-                if (!isAuth) {
-                    openModal();
-                    showModalMessage('Для заказа необходимо авторизоваться', 'error');
-                } else {
-                    alert('🍕 Заказ добавлен! (демо-режим) С вами свяжется оператор.');
-                }
+        currentUser = { email: '', role: '', isLoggedIn: false };
+        updateHeader();
+    }
+    
+    // Добавление пиццы
+    document.getElementById('addPizzaForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const btn = document.getElementById('addPizzaBtn');
+        const message = document.getElementById('addPizzaMessage');
+        
+        const pizzaData = {
+            namePizza: document.getElementById('namePizza').value,
+            cost: parseInt(document.getElementById('cost').value),
+            ingredients: document.getElementById('ingredients').value,
+            picturePizza: document.getElementById('picturePizza').value || '',
+            size: parseInt(document.getElementById('size').value),
+            thicknessDough: document.getElementById('thicknessDough').value === 'true'
+        };
+        
+        btn.disabled = true;
+        btn.textContent = 'Добавление...';
+        message.style.display = 'none';
+        
+        try {
+            const response = await fetch(`${API_URL}/pizzas/add_pizza`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(pizzaData)
             });
-        });
-    }
-
-    // инициализация событий модалки
-    function bindModalEvents() {
-        modalForm.addEventListener('submit', submitAuth);
-        modalToggleLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            toggleModalMode();
-        });
-        closeModalBtn.addEventListener('click', closeModal);
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) closeModal();
-        });
-    }
-
-    // загрузка
-    async function init() {
-        renderCatalog();
-        bindModalEvents();
-        await refreshUserUI();
-        // если клик на кнопку "Войти", переоткрыть модалку
-        const dynamicBtn = document.getElementById('openAuthBtn');
-        if (dynamicBtn) dynamicBtn.addEventListener('click', openModal);
-        // проверяем cookie раз в 2с для синхронизации (если бэк сбросил куку)
-        setInterval(async () => {
-            const prevState = isUserLoggedIn;
-            await refreshUserUI();
-            if (prevState !== getAuthStatusFromCookies()) {
-                // UI обновится
+            
+            const result = await response.json();
+            
+            if (response.ok) {
+                message.textContent = '✅ Пицца добавлена!';
+                message.className = 'form-message success';
+                message.style.display = 'block';
+                e.target.reset();
+                
+                // ✅ ПЕРЕЗАГРУЖАЕМ КАТАЛОГ
+                await loadPizzas();
+                
+                setTimeout(() => { message.style.display = 'none'; }, 3000);
+            } else {
+                message.textContent = result.detail || 'Ошибка';
+                message.className = 'form-message error';
+                message.style.display = 'block';
             }
-        }, 3000);
+        } catch (error) {
+            message.textContent = 'Ошибка соединения';
+            message.className = 'form-message error';
+            message.style.display = 'block';
+        } finally {
+            btn.disabled = false;
+            btn.textContent = '➕ Добавить пиццу';
+        }
+    });
+    
+    // Модальное окно
+    function openModal() {
+        document.getElementById('authModal').classList.add('active');
+        isLoginMode = true;
+        updateModal();
     }
-
-    init();
+    
+    function closeModal() {
+        document.getElementById('authModal').classList.remove('active');
+        document.getElementById('modalMessage').style.display = 'none';
+    }
+    
+    function toggleMode() {
+        isLoginMode = !isLoginMode;
+        updateModal();
+    }
+    
+    function updateModal() {
+        document.getElementById('modalTitle').textContent = isLoginMode ? 'Вход' : 'Регистрация';
+        document.getElementById('modalSub').textContent = isLoginMode ? 'Войдите в аккаунт' : 'Создайте аккаунт';
+        document.getElementById('authBtn').textContent = isLoginMode ? 'Войти' : 'Зарегистрироваться';
+        document.getElementById('toggleText').textContent = isLoginMode ? 'Нет аккаунта?' : 'Уже есть аккаунт?';
+        document.getElementById('toggleLink').textContent = isLoginMode ? 'Зарегистрироваться' : 'Войти';
+    }
+    
+    function orderPizza(id) {
+        if (!currentUser.isLoggedIn) {
+            openModal();
+            alert('Для заказа необходимо авторизоваться');
+        } else {
+            alert('🍕 Пицца заказана!');
+        }
+    }
+    
+    // Инициализация
+    document.addEventListener('DOMContentLoaded', () => {
+        loadPizzas(); // Загружаем пиццы из БД
+        checkAuth();
+        setInterval(checkAuth, 5000);
+    });
+    
+    document.getElementById('authModal').addEventListener('click', (e) => {
+        if (e.target.id === 'authModal') closeModal();
+    });
 </script>
+
 </body>
 </html>

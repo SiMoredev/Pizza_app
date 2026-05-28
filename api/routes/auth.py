@@ -5,6 +5,7 @@ from api.deps import get_db
 from db.models import Users
 import bcrypt
 from authx import AuthX, AuthXConfig
+from authx.exceptions import MissingTokenError
 import os
 from dotenv import load_dotenv
 from datetime import timedelta
@@ -19,6 +20,7 @@ config = AuthXConfig(
     JWT_ACCESS_TOKEN_EXPIRES=timedelta(minutes=30),
     JWT_TOKEN_LOCATION=["cookies"],
     JWT_ACCESS_COOKIE_NAME="access_token",
+    JWT_ERROR_MESSAGE_KEY="Token not found, need authorize"
 )
 
 auth = AuthX(config=config)
@@ -86,8 +88,9 @@ async def login_user(response: Response, email: str, password: str, db: AsyncSes
 
 @auth_router.get("/me")
 async def me(claims=Depends(auth.access_token_required)):
-
+    
     return {
         "sub": claims.sub,
         "role": claims.role
     }
+
