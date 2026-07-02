@@ -25,3 +25,13 @@ class Users(Base):
     password = Column(String(100), nullable=False)
 
     role = Column(String(100), default="user")
+
+class Basket(Base):
+
+    __tablename__ = "busket"
+
+    id = Column(Integer, primary_key=True, index=True)
+    pizza_id = Column(Integer, index=True, nullable=False)
+    user_email = Column(String(100), index=True, nullable=False)
+    pizza_value = Column(Integer, nullable=False)
+

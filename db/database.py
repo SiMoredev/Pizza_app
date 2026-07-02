@@ -24,3 +24,5 @@ AsyncSessionLocal = async_sessionmaker(
 
 class Base(DeclarativeBase):
     pass
+
+create_all = Base.metadata.create_all
