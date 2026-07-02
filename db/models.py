@@ -28,7 +28,7 @@ class Users(Base):
 
 class Basket(Base):
 
-    __tablename__ = "busket"
+    __tablename__ = "basket"
 
     id = Column(Integer, primary_key=True, index=True)
     pizza_id = Column(Integer, index=True, nullable=False)

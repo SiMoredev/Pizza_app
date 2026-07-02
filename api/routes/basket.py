@@ -24,3 +24,10 @@ async def add_pizza_on_basket(order: schemas.AddBasket, db: AsyncSession = Depen
     await db.refresh(add_basket)
     
     return {"message": "Pizza added successfully!", "add_basket_id": add_basket.id}
+
+@basket_router.get("/user_busket")
+async def get_basket_user(user_email: str, db: AsyncSession = Depends(get_db)):
+    query = select(Basket).where(Basket.user_email == user_email)
+    result = await db.execute(query)
+    pizzas = result.scalars().all()
+    return pizzas
