@@ -3,340 +3,592 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Авторизация</title>
+    <title>Пиццерия МамаМия</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
-        .card {
-            background: white;
-            border-radius: 1.5rem;
-            padding: 2rem;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 20px 35px -10px rgba(0,0,0,0.3);
-        }
-        h2 { font-size: 1.8rem; font-weight: 600; margin-bottom: 0.5rem; color: #0f172a; }
-        .sub { color: #475569; margin-bottom: 1.8rem; font-size: 0.9rem; }
-        .input-group { margin-bottom: 1.2rem; }
-        label { display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: #1e293b; }
-        input {
-            width: 100%;
-            padding: 0.7rem 1rem;
-            border: 1px solid #cbd5e1;
-            border-radius: 0.75rem;
-            font-size: 1rem;
-            font-family: inherit;
-            background: #f8fafc;
-        }
-        input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
-        button {
-            width: 100%;
-            background: #3b82f6;
-            color: white;
-            border: none;
-            padding: 0.75rem;
-            font-size: 1rem;
-            font-weight: 600;
-            border-radius: 0.75rem;
-            cursor: pointer;
-            margin-top: 0.5rem;
-        }
-        button:hover { background: #2563eb; }
-        .message {
-            margin-top: 1rem;
-            padding: 0.7rem;
-            border-radius: 0.75rem;
-            font-size: 0.85rem;
-            text-align: center;
-            display: none;
-        }
-        .message.error { background: #fee2e2; color: #b91c1c; display: block; }
-        .message.success { background: #dcfce7; color: #166534; display: block; }
-        .toggle { text-align: center; margin-top: 1.2rem; font-size: 0.85rem; color: #475569; }
-        .toggle a { color: #3b82f6; text-decoration: none; font-weight: 500; cursor: pointer; }
-        hr { margin: 1.5rem 0 1rem; border: none; border-top: 1px solid #e2e8f0; }
-        .api-hint { background: #f1f5f9; padding: 0.7rem; border-radius: 0.75rem; font-size: 0.7rem; color: #334155; margin-top: 1rem; text-align: center; }
-        .logout-btn { background: #ef4444; margin-top: 0.5rem; }
-        .logout-btn:hover { background: #dc2626; }
-        .user-info { background: #e0f2fe; padding: 0.5rem; border-radius: 0.5rem; margin-top: 1rem; text-align: center; font-size: 0.8rem; word-break: break-all; }
-        .cookie-status { background: #fef3c7; padding: 0.5rem; border-radius: 0.5rem; margin-bottom: 1rem; font-size: 0.75rem; text-align: center; }
+        body { font-family: sans-serif; padding: 20px; max-width: 1000px; margin: 0 auto; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #ccc; padding-bottom: 10px; }
+        .nav-tabs { display: flex; gap: 10px; }
+        .nav-tab { padding: 6px 14px; border: 1px solid #999; border-radius: 4px; background: #fff; cursor: pointer; }
+        .nav-tab.active { background: #333; color: #fff; }
+        .nav-tab.admin-only { display: none; }
+        .nav-tab.admin-only.visible { display: inline-block; }
+        .user-info { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
+        .user-info .role { background: #c00; color: #fff; padding: 2px 6px; border-radius: 3px; font-size: 0.7rem; }
+        .logout-btn, .cart-btn-header { padding: 6px 14px; border: 1px solid #999; background: #fff; cursor: pointer; border-radius: 4px; }
+        .cart-btn-header { background: #28a745; color: #fff; border: none; font-weight: bold; }
+        
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+        
+        .pizza-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; margin-top: 16px; }
+        .pizza-card { border: 1px solid #ddd; border-radius: 6px; padding: 12px; }
+        .pizza-card img { width: 100%; height: 120px; object-fit: cover; border-radius: 4px; margin-bottom: 8px; }
+        .pizza-card .emoji { font-size: 2.5rem; text-align: center; margin-bottom: 8px; }
+        .pizza-card h3 { font-size: 1.1rem; margin-bottom: 4px; }
+        .pizza-card .desc { font-size: 0.85rem; color: #555; margin-bottom: 8px; }
+        .pizza-card .meta { font-size: 0.8rem; color: #777; margin-bottom: 8px; }
+        .pizza-card .bottom { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+        .pizza-card .price { font-weight: bold; font-size: 1.1rem; }
+        .pizza-card .actions { display: none; gap: 6px; }
+        .pizza-card.admin-mode .actions { display: flex; }
+        .pizza-card .actions button { padding: 4px 8px; border: 1px solid #999; border-radius: 3px; background: #fff; cursor: pointer; font-size: 0.8rem; }
+        .cart-btn { padding: 6px 12px; background: #28a745; color: #fff; border: none; border-radius: 3px; cursor: pointer; font-size: 0.85rem; }
+        
+        .form-container { max-width: 500px; margin-top: 16px; }
+        .form-container h2 { margin-bottom: 16px; }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 0.9rem; margin-bottom: 4px; font-weight: 500; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.95rem; }
+        .form-group textarea { min-height: 60px; resize: vertical; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .submit-btn { width: 100%; padding: 10px; background: #333; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 1rem; margin-top: 8px; }
+        .cancel-btn { background: #666; }
+        .form-message { margin-top: 10px; padding: 8px; border-radius: 4px; text-align: center; display: none; font-size: 0.9rem; }
+        .form-message.success { background: #d4edda; color: #155724; }
+        .form-message.error { background: #f8d7da; color: #721c24; }
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 100; }
+        .modal.active { display: flex; }
+        .modal-card { background: #fff; border-radius: 8px; padding: 24px; width: 350px; position: relative; }
+        .modal-close { position: absolute; top: 10px; right: 14px; font-size: 1.4rem; cursor: pointer; color: #666; }
+        .modal h2 { margin-bottom: 6px; }
+        .modal .input-group { margin-bottom: 12px; }
+        .modal .input-group label { display: block; font-size: 0.85rem; margin-bottom: 4px; }
+        .modal input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        .modal button[type="submit"] { width: 100%; padding: 10px; background: #333; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 6px; }
+        .modal .toggle { text-align: center; margin-top: 12px; font-size: 0.85rem; }
+        .modal .toggle a { color: #0066cc; cursor: pointer; }
+        .modal .message { margin-top: 10px; padding: 6px; border-radius: 4px; font-size: 0.8rem; text-align: center; display: none; }
+        .modal .message.success { background: #d4edda; color: #155724; }
+        .modal .message.error { background: #f8d7da; color: #721c24; }
+        
+        .cart-items { max-height: 300px; overflow-y: auto; margin: 16px 0; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #eee; }
+        .cart-item-info { flex: 1; }
+        .cart-item-name { font-weight: bold; }
+        .cart-item-qty { color: #666; font-size: 0.9rem; }
+        .cart-item-price { font-weight: bold; color: #28a745; }
+        .cart-total { font-size: 1.2rem; font-weight: bold; text-align: right; margin-top: 12px; padding-top: 12px; border-top: 2px solid #333; }
+        .cart-empty { text-align: center; color: #666; padding: 20px; }
+        
+        .loading { text-align: center; padding: 20px; color: #666; }
+        .notification { position: fixed; top: 20px; right: 20px; background: #28a745; color: #fff; padding: 12px 20px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 1000; display: none; }
+        .notification.error { background: #dc3545; }
     </style>
 </head>
 <body>
-<div class="card">
-    <div id="cookieStatus" class="cookie-status" style="display: none;"></div>
-    
-    <h2 id="formTitle">Вход</h2>
-    <div class="sub" id="formSub">Войдите в свой аккаунт</div>
 
-    <form id="authForm">
-        <div class="input-group">
-            <label>Email</label>
-            <input type="email" id="email" required placeholder="you@example.com">
-        </div>
-        <div class="input-group">
-            <label>Пароль</label>
-            <input type="password" id="password" required placeholder="••••••">
-        </div>
-        <button type="submit" id="actionBtn">Войти</button>
-    </form>
-
-    <div id="message" class="message"></div>
-
-    <div class="toggle">
-        <span id="toggleText">Нет аккаунта?</span>
-        <a id="toggleLink">Зарегистрироваться</a>
+<header>
+    <h2>🍕 МамаМия</h2>
+    <nav class="nav-tabs">
+        <button class="nav-tab active" onclick="switchTab('catalog')">Каталог</button>
+        <button class="nav-tab admin-only" id="adminTab" onclick="switchTab('addPizza')">Добавить пиццу</button>
+    </nav>
+    <div id="headerAuthArea">
+        <button class="cart-btn-header" onclick="openViewCart()" style="display:none;" id="cartHeaderBtn">🛒 Корзина</button>
     </div>
-    
-    <div id="logoutSection" style="display: none;">
-        <div id="userInfo" class="user-info"></div>
-        <hr>
-        <button id="logoutBtn" class="logout-btn">🚪 Выйти</button>
-    </div>
-    
-    <hr>
-    <div class="api-hint">
-        ⚙️ API: <strong id="apiEndpointDisplay">http://localhost:8000</strong><br>
-        <span style="font-size: 0.65rem;">🍪 Cookie должны устанавливаться автоматически бэкендом</span>
+</header>
+
+<main>
+    <section id="catalog-section" class="content-section active">
+        <h2>Каталог пицц</h2>
+        <div id="pizzaLoading" class="loading">Загрузка...</div>
+        <div class="pizza-grid" id="pizzaCatalog"></div>
+    </section>
+
+    <section id="add-pizza-section" class="content-section">
+        <div class="form-container">
+            <h2 id="formTitle">Добавить пиццу</h2>
+            <form id="pizzaForm">
+                <input type="hidden" id="pizzaId">
+                <div class="form-group">
+                    <label>Название *</label>
+                    <input type="text" id="namePizza" required placeholder="Маргарита">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Цена (руб) *</label>
+                        <input type="number" id="cost" required min="0" placeholder="450">
+                    </div>
+                    <div class="form-group">
+                        <label>Размер (см) *</label>
+                        <select id="size" required>
+                            <option value="25">25</option>
+                            <option value="30" selected>30</option>
+                            <option value="35">35</option>
+                            <option value="40">40</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Ингредиенты *</label>
+                    <textarea id="ingredients" required placeholder="Томатный соус, моцарелла, базилик"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>URL картинки</label>
+                    <input type="url" id="picturePizza" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label>Тесто *</label>
+                    <select id="thicknessDough" required>
+                        <option value="true">Тонкое</option>
+                        <option value="false">Толстое</option>
+                    </select>
+                </div>
+                <button type="submit" class="submit-btn" id="pizzaBtn">Добавить</button>
+                <button type="button" class="submit-btn cancel-btn" id="cancelEditBtn" style="display:none;" onclick="cancelEdit()">Отмена</button>
+                <div id="pizzaMessage" class="form-message"></div>
+            </form>
+        </div>
+    </section>
+</main>
+
+<div id="authModal" class="modal">
+    <div class="modal-card">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <h2 id="modalTitle">Вход</h2>
+        <form id="authForm">
+            <div class="input-group">
+                <label>Email</label>
+                <input type="email" id="email" required placeholder="you@example.com">
+            </div>
+            <div class="input-group">
+                <label>Пароль</label>
+                <input type="password" id="password" required placeholder="••••••">
+            </div>
+            <button type="submit" id="authBtn">Войти</button>
+        </form>
+        <div id="modalMessage" class="message"></div>
+        <div class="toggle">
+            <span id="toggleText">Нет аккаунта?</span>
+            <a id="toggleLink" onclick="toggleMode()">Зарегистрироваться</a>
+        </div>
     </div>
 </div>
 
+<div id="cartModal" class="modal">
+    <div class="modal-card" style="width: 500px;">
+        <span class="modal-close" onclick="closeViewCart()">&times;</span>
+        <h2>🛒 Корзина</h2>
+        <div id="cartContent">
+            <div class="loading">Загрузка...</div>
+        </div>
+    </div>
+</div>
+
+<div id="notification" class="notification"></div>
+
 <script>
-    const API_CONFIG = {
-        baseUrl: 'http://localhost:8000',
-        endpoints: {
-            login: '/auth/login',
-            register: '/auth/register'
-        },
-        cookieName: 'access_token'  // имя cookie, которое устанавливает бэкенд
-    };
-
+    const API_URL = 'http://localhost:8000';
+    let currentUser = { id: null, email: '', role: '', isLoggedIn: false };
     let isLoginMode = true;
-    const emailInput = document.getElementById('email');
-    const passwordInput = document.getElementById('password');
-    const messageDiv = document.getElementById('message');
-    const formTitle = document.getElementById('formTitle');
-    const formSub = document.getElementById('formSub');
-    const actionBtn = document.getElementById('actionBtn');
-    const toggleLink = document.getElementById('toggleLink');
-    const toggleText = document.getElementById('toggleText');
-    const logoutSection = document.getElementById('logoutSection');
-    const logoutBtn = document.getElementById('logoutBtn');
-    const userInfoDiv = document.getElementById('userInfo');
-    const cookieStatus = document.getElementById('cookieStatus');
+    let allPizzas = [];
+    let isEditMode = false;
+    let userBasket = [];
 
-    function showMessage(text, type = 'error') {
-        messageDiv.textContent = text;
-        messageDiv.className = 'message ' + type;
-        setTimeout(() => {
-            if (messageDiv.textContent === text) {
-                messageDiv.style.display = 'none';
-                messageDiv.className = 'message';
-            }
-        }, 4000);
-        messageDiv.style.display = 'block';
-    }
-
-    // Получить все cookie
-    function getAllCookies() {
-        return document.cookie;
-    }
-
-    // Проверить наличие cookie от бэкенда
-    function hasAuthCookie() {
-        const cookies = document.cookie;
-        // Проверяем наличие cookie с токеном (может называться access_token, token, или другое)
-        return cookies.includes(API_CONFIG.cookieName) || 
-               cookies.includes('access_token') || 
-               cookies.includes('token');
-    }
-
-    // Обновление UI в зависимости от наличия cookie
-    function updateAuthUI() {
-        const hasCookie = hasAuthCookie();
-        
-        // Показываем статус cookie для отладки
-        if (document.cookie) {
-            cookieStatus.style.display = 'block';
-            cookieStatus.innerHTML = `🍪 Найдены cookie: <strong>${document.cookie.split('; ').join('; ')}</strong>`;
+    function switchTab(tab) {
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+        if (tab === 'catalog') {
+            document.querySelector('.nav-tab:first-child').classList.add('active');
+            document.getElementById('catalog-section').classList.add('active');
+            loadPizzas();
         } else {
-            cookieStatus.style.display = 'none';
+            document.getElementById('adminTab').classList.add('active');
+            document.getElementById('add-pizza-section').classList.add('active');
         }
-        
-        if (hasCookie) {
-            // Пользователь авторизован (есть cookie от бэкенда)
-            document.getElementById('authForm').style.display = 'none';
-            toggleLink.style.display = 'none';
-            toggleText.style.display = 'none';
-            logoutSection.style.display = 'block';
-            
-            // Пытаемся извлечь email из cookie или показываем общее сообщение
-            userInfoDiv.innerHTML = `🔐 Авторизован (cookie установлены бэкендом)<br>
-                                     <span style="font-size: 0.7rem;">${document.cookie}</span>`;
-            formTitle.textContent = '✅ Добро пожаловать!';
-            formSub.textContent = 'Вы успешно авторизованы';
-        } else {
-            document.getElementById('authForm').style.display = 'block';
-            toggleLink.style.display = 'inline';
-            toggleText.style.display = 'inline';
-            logoutSection.style.display = 'none';
-            
-            if (isLoginMode) {
-                formTitle.textContent = 'Вход';
-                formSub.textContent = 'Войдите в свой аккаунт';
+    }
+
+    async function loadPizzas() {
+        const loading = document.getElementById('pizzaLoading');
+        const grid = document.getElementById('pizzaCatalog');
+        try {
+            loading.style.display = 'block';
+            grid.innerHTML = '';
+            const response = await fetch(`${API_URL}/pizzas`, { headers: { 'Accept': 'application/json' } });
+            if (response.ok) {
+                allPizzas = await response.json();
+                renderCatalog();
             } else {
-                formTitle.textContent = 'Регистрация';
-                formSub.textContent = 'Создайте новый аккаунт';
+                grid.innerHTML = '<p>Ошибка загрузки</p>';
             }
+        } catch (error) {
+            grid.innerHTML = '<p>Ошибка соединения с сервером</p>';
+        } finally {
+            loading.style.display = 'none';
         }
     }
 
-    async function handleSubmit(e) {
+    function renderCatalog() {
+        const grid = document.getElementById('pizzaCatalog');
+        const isAdmin = currentUser.role === 'admin';
+        if (allPizzas.length === 0) {
+            grid.innerHTML = '<p>Пицц пока нет</p>';
+            return;
+        }
+        grid.innerHTML = allPizzas.map(pizza => {
+            const hasImage = pizza.picturePizza && pizza.picturePizza.trim() !== '';
+            return `
+                <div class="pizza-card ${isAdmin ? 'admin-mode' : ''}">
+                    ${hasImage
+                        ? `<img src="${pizza.picturePizza}" alt="${pizza.namePizza}" onerror="this.outerHTML='<div class=\\'emoji\\'>🍕</div>'">`
+                        : `<div class="emoji">🍕</div>`
+                    }
+                    <h3>${pizza.namePizza}</h3>
+                    <div class="desc">${pizza.ingredients}</div>
+                    <div class="meta">${pizza.size} см • ${pizza.thicknessDough ? 'Тонкое' : 'Толстое'} тесто</div>
+                    <div class="bottom">
+                        <span class="price">${pizza.cost} ₽</span>
+                        <div class="actions">
+                            <button onclick="editPizza(${pizza.id})">✏️</button>
+                            <button onclick="deletePizza(${pizza.id})">🗑️</button>
+                        </div>
+                        <button class="cart-btn" onclick="addToCart(${pizza.id})">В корзину</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    async function editPizza(id) {
+        const pizza = allPizzas.find(p => p.id === id);
+        if (!pizza) return;
+        document.getElementById('pizzaId').value = pizza.id;
+        document.getElementById('namePizza').value = pizza.namePizza || '';
+        document.getElementById('cost').value = pizza.cost || 0;
+        document.getElementById('ingredients').value = pizza.ingredients || '';
+        document.getElementById('picturePizza').value = pizza.picturePizza || '';
+        document.getElementById('size').value = pizza.size || 30;
+        document.getElementById('thicknessDough').value = pizza.thicknessDough ? 'true' : 'false';
+        isEditMode = true;
+        document.getElementById('formTitle').textContent = 'Редактировать пиццу';
+        document.getElementById('pizzaBtn').textContent = 'Сохранить';
+        document.getElementById('cancelEditBtn').style.display = 'block';
+        switchTab('addPizza');
+    }
+
+    async function deletePizza(id) {
+        if (!confirm('Удалить пиццу?')) return;
+        try {
+            const response = await fetch(`${API_URL}/pizzas/delete/${id}`, { method: 'DELETE', credentials: 'include' });
+            if (response.ok) {
+                await loadPizzas();
+            } else {
+                alert('Ошибка удаления');
+            }
+        } catch (error) {
+            alert('Ошибка соединения');
+        }
+    }
+
+    function cancelEdit() {
+        isEditMode = false;
+        document.getElementById('pizzaForm').reset();
+        document.getElementById('pizzaId').value = '';
+        document.getElementById('formTitle').textContent = 'Добавить пиццу';
+        document.getElementById('pizzaBtn').textContent = 'Добавить';
+        document.getElementById('cancelEditBtn').style.display = 'none';
+        document.getElementById('pizzaMessage').style.display = 'none';
+        switchTab('catalog');
+    }
+
+    async function checkAuth() {
+        try {
+            const response = await fetch(`${API_URL}/auth/me`, { credentials: 'include', headers: { 'Accept': 'application/json' } });
+            if (response.ok) {
+                const data = await response.json();
+                currentUser = { 
+                    id: data.id || data.user_id || data.sub || null,
+                    email: data.email || data.sub || '', 
+                    role: data.role || 'user', 
+                    isLoggedIn: true 
+                };
+                document.getElementById('cartHeaderBtn').style.display = 'inline-block';
+            } else {
+                currentUser = { id: null, email: '', role: '', isLoggedIn: false };
+                document.getElementById('cartHeaderBtn').style.display = 'none';
+            }
+        } catch (error) {
+            currentUser = { id: null, email: '', role: '', isLoggedIn: false };
+            document.getElementById('cartHeaderBtn').style.display = 'none';
+        }
+        updateHeader();
+        if (allPizzas.length > 0) renderCatalog();
+    }
+
+    function updateHeader() {
+        const authArea = document.getElementById('headerAuthArea');
+        const adminTab = document.getElementById('adminTab');
+        const cartBtn = document.getElementById('cartHeaderBtn');
+        
+        if (currentUser.isLoggedIn) {
+            const emailShort = currentUser.email.split('@')[0];
+            const roleBadge = currentUser.role === 'admin' ? '<span class="role">ADMIN</span>' : '';
+            authArea.innerHTML = `
+                ${cartBtn.outerHTML}
+                <div class="user-info">
+                    <span>${emailShort}</span>
+                    ${roleBadge}
+                    <button class="logout-btn" onclick="logout()">Выйти</button>
+                </div>
+            `;
+            adminTab.classList.toggle('visible', currentUser.role === 'admin');
+        } else {
+            authArea.innerHTML = '<button class="cart-btn-header" onclick="openModal()" style="background:#333;color:#fff;border:none;">Войти</button>';
+            adminTab.classList.remove('visible');
+        }
+    }
+
+    document.getElementById('authForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        messageDiv.style.display = 'none';
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const btn = document.getElementById('authBtn');
+        const message = document.getElementById('modalMessage');
+        btn.disabled = true;
+        btn.textContent = 'Загрузка...';
+        message.style.display = 'none';
+        const endpoint = isLoginMode ? '/auth/login' : '/auth/register';
+        const url = `${API_URL}${endpoint}?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
+        try {
+            const response = await fetch(url, { method: 'POST', credentials: 'include' });
+            const data = await response.json();
+            if (response.ok) {
+                if (isLoginMode) {
+                    message.textContent = 'Вход выполнен!';
+                    message.className = 'message success';
+                    message.style.display = 'block';
+                    setTimeout(async () => { 
+                        closeModal(); 
+                        await checkAuth(); 
+                    }, 800);
+                } else {
+                    message.textContent = 'Регистрация успешна! Войдите.';
+                    message.className = 'message success';
+                    message.style.display = 'block';
+                    setTimeout(() => {
+                        isLoginMode = true;
+                        updateModal();
+                        document.getElementById('email').value = email;
+                        document.getElementById('password').value = '';
+                    }, 1200);
+                }
+            } else {
+                message.textContent = typeof data.detail === 'string' ? data.detail : JSON.stringify(data.detail);
+                message.className = 'message error';
+                message.style.display = 'block';
+            }
+        } catch (error) {
+            message.textContent = 'Ошибка соединения';
+            message.className = 'message error';
+            message.style.display = 'block';
+        } finally {
+            btn.disabled = false;
+            btn.textContent = isLoginMode ? 'Войти' : 'Зарегистрироваться';
+        }
+    });
+
+    async function logout() {
+        try { await fetch(`${API_URL}/auth/logout`, { method: 'POST', credentials: 'include' }); } catch(e) {}
+        document.cookie.split(";").forEach(c => {
+            document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+        });
+        currentUser = { id: null, email: '', role: '', isLoggedIn: false };
+        document.getElementById('cartHeaderBtn').style.display = 'none';
+        updateHeader();
+        if (allPizzas.length > 0) renderCatalog();
+    }
+
+    document.getElementById('pizzaForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('pizzaBtn');
+        const message = document.getElementById('pizzaMessage');
+        const pizzaId = document.getElementById('pizzaId').value;
+        const pizzaData = {
+            namePizza: document.getElementById('namePizza').value,
+            cost: parseInt(document.getElementById('cost').value),
+            ingredients: document.getElementById('ingredients').value,
+            picturePizza: document.getElementById('picturePizza').value || '',
+            size: parseInt(document.getElementById('size').value),
+            thicknessDough: document.getElementById('thicknessDough').value === 'true'
+        };
+        btn.disabled = true;
+        btn.textContent = isEditMode ? 'Сохранение...' : 'Добавление...';
+        message.style.display = 'none';
+        try {
+            const url = isEditMode ? `${API_URL}/pizzas/update/${pizzaId}` : `${API_URL}/pizzas/add_pizza`;
+            const method = isEditMode ? 'PUT' : 'POST';
+            const response = await fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(pizzaData)
+            });
+            const result = await response.json();
+            if (response.ok) {
+                message.textContent = isEditMode ? 'Обновлено!' : 'Добавлено!';
+                message.className = 'form-message success';
+                message.style.display = 'block';
+                await loadPizzas();
+                if (!isEditMode) e.target.reset();
+                setTimeout(() => {
+                    message.style.display = 'none';
+                    if (!isEditMode) {
+                        cancelEdit();
+                    }
+                }, 1000);
+            } else {
+                message.textContent = typeof result.detail === 'string' ? result.detail : JSON.stringify(result.detail);
+                message.className = 'form-message error';
+                message.style.display = 'block';
+            }
+        } catch (error) {
+            message.textContent = 'Ошибка соединения';
+            message.className = 'form-message error';
+            message.style.display = 'block';
+        } finally {
+            btn.disabled = false;
+            btn.textContent = isEditMode ? 'Сохранить' : 'Добавить';
+        }
+    });
+
+    function openModal() {
+        document.getElementById('authModal').classList.add('active');
+        isLoginMode = true;
+        updateModal();
+    }
+    function closeModal() {
+        document.getElementById('authModal').classList.remove('active');
+        document.getElementById('modalMessage').style.display = 'none';
+    }
+    function toggleMode() {
+        isLoginMode = !isLoginMode;
+        updateModal();
+    }
+    function updateModal() {
+        document.getElementById('modalTitle').textContent = isLoginMode ? 'Вход' : 'Регистрация';
+        document.getElementById('authBtn').textContent = isLoginMode ? 'Войти' : 'Зарегистрироваться';
+        document.getElementById('toggleText').textContent = isLoginMode ? 'Нет аккаунта?' : 'Уже есть аккаунт?';
+        document.getElementById('toggleLink').textContent = isLoginMode ? 'Зарегистрироваться' : 'Войти';
+    }
+
+    async function addToCart(pizzaId) {
+        if (!currentUser.isLoggedIn) {
+            openModal();
+            showNotification('Нужно авторизоваться', 'error');
+            return;
+        }
+        const pizza = allPizzas.find(p => p.id === pizzaId);
+        if (!pizza) return;
         
-        const email = emailInput.value.trim();
-        const password = passwordInput.value;
+        try {
+            const response = await fetch(`${API_URL}/basket/add_pizza_on_basket`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({
+                    pizza_id: pizza.id,
+                    user_email: currentUser.email,
+                    pizza_value: 1
+                })
+            });
+            if (response.ok) {
+                showNotification(`✅ ${pizza.namePizza} добавлена в корзину`);
+            } else {
+                showNotification('Ошибка добавления в корзину', 'error');
+            }
+        } catch (error) {
+            showNotification('Ошибка соединения', 'error');
+        }
+    }
+
+    async function openViewCart() {
+        if (!currentUser.isLoggedIn || !currentUser.email) {
+            showNotification('Нужно авторизоваться', 'error');
+            return;
+        }
+        document.getElementById('cartModal').classList.add('active');
+        await loadUserBasket();
+    }
+
+    function closeViewCart() {
+        document.getElementById('cartModal').classList.remove('active');
+    }
+
+    async function loadUserBasket() {
+        const content = document.getElementById('cartContent');
+        content.innerHTML = '<div class="loading">Загрузка...</div>';
         
-        if (!email || !password) {
-            showMessage('Заполните email и пароль', 'error');
+        try {
+            const response = await fetch(`${API_URL}/basket/user_busket?user_email=${encodeURIComponent(currentUser.email)}`, {
+                credentials: 'include'
+            });
+            
+            if (response.ok) {
+                userBasket = await response.json();
+                renderCart();
+            } else {
+                content.innerHTML = '<div class="cart-empty">Корзина пуста</div>';
+            }
+        } catch (error) {
+            content.innerHTML = '<div class="cart-empty">Ошибка загрузки корзины</div>';
+        }
+    }
+
+    function renderCart() {
+        const content = document.getElementById('cartContent');
+        
+        if (!userBasket || userBasket.length === 0) {
+            content.innerHTML = '<div class="cart-empty">Корзина пуста</div>';
             return;
         }
         
-        const btn = actionBtn;
-        const originalText = btn.textContent;
-        btn.disabled = true;
-        btn.textContent = 'Загрузка...';
+        let total = 0;
+        const itemsHtml = userBasket.map(item => {
+            const pizza = allPizzas.find(p => p.id === item.pizza_id);
+            const pizzaName = pizza ? pizza.namePizza : `Пицца #${item.pizza_id}`;
+            const pizzaCost = pizza ? pizza.cost : 0;
+            const itemTotal = pizzaCost * item.pizza_value;
+            total += itemTotal;
+            
+            return `
+                <div class="cart-item">
+                    <div class="cart-item-info">
+                        <div class="cart-item-name">${pizzaName}</div>
+                        <div class="cart-item-qty">${item.pizza_value} шт. × ${pizzaCost} ₽</div>
+                    </div>
+                    <div class="cart-item-price">${itemTotal} ₽</div>
+                </div>
+            `;
+        }).join('');
         
-        try {
-            const endpoint = isLoginMode ? API_CONFIG.endpoints.login : API_CONFIG.endpoints.register;
-            const url = `${API_CONFIG.baseUrl}${endpoint}?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
-            
-            // ВАЖНО: credentials: 'include' для получения cookie от бэкенда
-            const response = await fetch(url, { 
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                credentials: 'include'  // <--- КЛЮЧЕВОЙ ПАРАМЕТР!
-            });
-            
-            // После запроса проверяем, появились ли cookie
-            console.log('Cookie после запроса:', document.cookie);
-            
-            let data = null;
-            const contentType = response.headers.get('content-type');
-            if (contentType && contentType.includes('application/json')) {
-                data = await response.json();
-            } else {
-                const text = await response.text();
-                data = { message: text || 'Ответ сервера' };
-            }
-            
-            if (response.ok) {
-                showMessage(`${isLoginMode ? 'Вход выполнен' : 'Регистрация успешна'}! Cookie должны быть установлены.`, 'success');
-                
-                // Обновляем UI после успешного запроса
-                setTimeout(() => {
-                    updateAuthUI();
-                }, 100);
-                
-                emailInput.value = '';
-                passwordInput.value = '';
-                
-                if (!isLoginMode) {
-                    setTimeout(() => {
-                        toggleMode();
-                        showMessage('Аккаунт создан! Теперь войдите.', 'success');
-                    }, 500);
-                }
-            } else {
-                const errorMsg = data.message || data.detail || `Ошибка ${response.status}`;
-                showMessage(errorMsg, 'error');
-            }
-        } catch (err) {
-            console.error('Ошибка:', err);
-            showMessage('Ошибка соединения с сервером. Проверьте URL и CORS.', 'error');
-        } finally {
-            btn.disabled = false;
-            btn.textContent = originalText;
-        }
+        content.innerHTML = `
+            <div class="cart-items">${itemsHtml}</div>
+            <div class="cart-total">Итого: ${total} ₽</div>
+            <button class="submit-btn" style="margin-top:16px;background:#28a745;" onclick="checkout()">Оформить заказ</button>
+        `;
     }
 
-    function toggleMode() {
-        isLoginMode = !isLoginMode;
-        if (isLoginMode) {
-            formTitle.textContent = 'Вход';
-            formSub.textContent = 'Войдите в свой аккаунт';
-            actionBtn.textContent = 'Войти';
-            toggleText.textContent = 'Нет аккаунта?';
-            toggleLink.textContent = 'Зарегистрироваться';
-        } else {
-            formTitle.textContent = 'Регистрация';
-            formSub.textContent = 'Создайте новый аккаунт';
-            actionBtn.textContent = 'Зарегистрироваться';
-            toggleText.textContent = 'Уже есть аккаунт?';
-            toggleLink.textContent = 'Войти';
-        }
-        messageDiv.style.display = 'none';
-        emailInput.value = '';
-        passwordInput.value = '';
+    async function checkout() {
+        showNotification('Заказ оформлен! 🎉');
+        closeViewCart();
     }
 
-    // Выход - удаляем cookie через бэкенд
-    async function logout() {
-        try {
-            // Если есть эндпоинт для выхода на бэкенде
-            const logoutUrl = `${API_CONFIG.baseUrl}/auth/logout`;
-            await fetch(logoutUrl, {
-                method: 'POST',
-                credentials: 'include'
-            });
-        } catch(e) {
-            console.log('Бэкенд не имеет эндпоинта /logout');
-        }
-        
-        // Также пробуем удалить cookie на фронте (если они не HttpOnly)
-        document.cookie.split(";").forEach(function(c) {
-            document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-        });
-        
-        updateAuthUI();
-        showMessage('Вы вышли из системы', 'success');
+    function showNotification(text, type = 'success') {
+        const notification = document.getElementById('notification');
+        notification.textContent = text;
+        notification.className = `notification ${type}`;
+        notification.style.display = 'block';
+        setTimeout(() => {
+            notification.style.display = 'none';
+        }, 3000);
     }
 
-    // Периодическая проверка cookie (для отладки)
-    setInterval(() => {
-        if (hasAuthCookie() !== (logoutSection.style.display === 'block')) {
-            updateAuthUI();
-        }
-    }, 1000);
-
-    // Инициализация
-    document.getElementById('authForm').addEventListener('submit', handleSubmit);
-    toggleLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        toggleMode();
-        updateAuthUI();
-    });
-    logoutBtn.addEventListener('click', logout);
-
-    document.getElementById('apiEndpointDisplay').textContent = API_CONFIG.baseUrl;
-    
-    // Проверяем авторизацию при загрузке
-    updateAuthUI();
-    
-    console.log('🔍 Для отладки:');
-    console.log('  - Проверьте вкладку Application → Cookies');
-    console.log('  - Убедитесь что бэкенд настроен с CORS: allow_credentials=True, allow_origins=["http://127.0.0.1:5500"]');
+    document.addEventListener('DOMContentLoaded', () => { loadPizzas(); checkAuth(); });
+    document.getElementById('authModal').addEventListener('click', (e) => { if (e.target.id === 'authModal') closeModal(); });
+    document.getElementById('cartModal').addEventListener('click', (e) => { if (e.target.id === 'cartModal') closeViewCart(); });
 </script>
+
 </body>
 </html>
