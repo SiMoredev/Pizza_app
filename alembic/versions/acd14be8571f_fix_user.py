@@ -1,8 +1,8 @@
-"""add pizza table
+"""fix user
 
-Revision ID: 87c59c981be8
-Revises: 
-Create Date: 2026-04-20 22:44:00.605907
+Revision ID: acd14be8571f
+Revises: 5d3049b5ef80
+Create Date: 2026-07-02 14:21:22.142342
 
 """
 from typing import Sequence, Union
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '87c59c981be8'
-down_revision: Union[str, Sequence[str], None] = None
+revision: str = 'acd14be8571f'
+down_revision: Union[str, Sequence[str], None] = '5d3049b5ef80'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
